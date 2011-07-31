@@ -1,3 +1,13 @@
+2011-07-30 Søren Højsgaard <sorenh@agrsci.dk>	
+
+	* dmod now also accepts data as a dataframe (and not just as a
+	table).
+
+	* Minor inconsistencies fixes - thanks to Joe Whittaker for
+	pointing out these.
+
+	* gRim version 0.1.1 uploaded	
+
 2011-07-20 Søren Højsgaard <sorenh@agrsci.dk>	
 
 	* gRim version 0.1.0 uploaded

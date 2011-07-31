@@ -90,11 +90,11 @@ testdelete.iModel <- function(object, edge, k=2, details=1, ...){
 }
 
 .comparemodels <- function(m1,m2) {
-  lrtdiff <- m2$fitinfo$lrt - m1$fitinfo$lrt
+  devdiff <- m2$fitinfo$dev - m1$fitinfo$dev
   dfdiff <- m2$fitinfo$dimension['df'] - m1$fitinfo$dimension['df']
   #cat(sprintf(".comparemodels: lrtdiff=%f, dfdiff=%f\n", lrtdiff, dfdiff))
-  ## NB: lrt = K - 2logL
-  list('statistic'=lrtdiff, 'df'=dfdiff, 'p.value'=1-pchisq(lrtdiff, dfdiff))
+  ## NB: dev = K - 2logL
+  list('statistic'=devdiff, 'df'=dfdiff, 'p.value'=1-pchisq(devdiff, dfdiff))
 }
 
 

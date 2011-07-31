@@ -8,24 +8,35 @@
 
 dmod <- function(formula, data, marginal=NULL, interactions=NULL, fit=TRUE, details=0){
 
-  ## Once a slice of data could be specified. This has been deprecated
-  connames <- conlevels <- NULL
-
-  varNames <- names(dimnames(data))
+  if (!inherits(data, c("data.frame","table"))){
+    stop("data must be either a dataframe or a table \n")
+  }
+  if (inherits(data,"data.frame")){
+    is_data.frame <- TRUE
+    varNames <- names(data)
+  } else {
+    is_data.frame <- FALSE
+    varNames <- names(dimnames(data))
+  }
 
   if (length(marginal)>0){
-    zzz <- unlist(lapply(marginal, pmatch, varNames))
-    zzz <- zzz[!is.na(zzz)]
+    zzz  <- unlist(lapply(marginal, pmatch, varNames))
+    zzz  <- zzz[!is.na(zzz)]
     marginal <- varNames[zzz]
   }
 
   ans <- pFormula(formula, varNames, marginal, interactions, v.sep = ":", g.sep = "+",
                   ignore.power.value=FALSE)
 
-  if (length(ans$varNames) != length(dimnames(data))){
-    data         <- as.table(tableMargin(data, ans$varNames))
-    varNames     <- names(dimnames(data))
+  if (is_data.frame){
+      data <- xtabs(~., data=data[ans$varNames])
+  } else {    
+    if (length(ans$varNames) != length(varNames)){
+      data         <- as.table(tableMargin(data, ans$varNames))
+    }
   }
+
+  varNames     <- names(dimnames(data))
 
   res <- list(glist     = ans$glist,
               varNames  = varNames,
@@ -76,13 +87,15 @@ fit.dModel <- function(object, engine="loglin", print=FALSE, ...){
   ## FIXME: At some point we should allow for data in the form of a dataframe
   ##
   switch(engine,
-         "loglin"={llfit<-loglin(object$datainfo$data, object$glist, fit=TRUE, print=print, ...)}
+         "loglin"={llfit<-loglin(object$datainfo$data, object$glist, fit=TRUE,
+                                 print=print, ...)
+                   names(llfit)[1] <- 'dev'  ## loglin() calls this slot 'lrt'
+                 }
          )
 
   ## Calculate df's and adjusted df's
   ## Requires data, glist
   ##
-
 
   if (!is.null(object$glistNUM))
     glistNUM <- object$glistNUM
@@ -110,7 +123,7 @@ fit.dModel <- function(object, engine="loglin", print=FALSE, ...){
   df.unadj     <- sat.dim.unadj - dim.unadj
 
 
-  ideviance    <-  -(llfit$lrt-indep.model$lrt)
+  ideviance    <-  -(llfit$dev-indep.model$lrt)
   idf          <-  -(llfit$df-indep.model$df)
 
   iii <- object$datainfo$data * llfit$fit > 0
@@ -132,6 +145,9 @@ fit.dModel <- function(object, engine="loglin", print=FALSE, ...){
                  sat.dim.adj = sat.dim.adj,
                  df.adj      = df.adj  )
 
+
+  llfit$df        <- NULL
+  
   llfit$aic       <- -2*llfit$logL + 2*dimension['mod.dim']
   llfit$bic       <- -2*llfit$logL + log(sum(object$datainfo$data))*dimension['mod.dim']
 

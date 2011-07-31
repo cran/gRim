@@ -6,7 +6,7 @@
 
 cmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0){
 
-  if (class(data)=="data.frame"){
+  if (inherits(data,"data.frame")){
     tmp   <- cov.wt(data, method="ML")
     S     <- tmp$cov
     n.obs <- tmp$n.obs
@@ -79,25 +79,25 @@ fit.cModel <- function(object, engine="ggmfit",start=NULL, ...){
          }
          )
 
-  ilrt  <-  ff$n.obs * (log(ff$detK) + sum(log(diag(ff$S))))  ## ideviance to independence model  
+  idev  <-  ff$n.obs * (log(ff$detK) + sum(log(diag(ff$S))))  ## ideviance to independence model  
   idim      <-  ff$nvar 
   sat.dim   <-  ((idim+1)*idim) / 2
   dim.unadj <-  sat.dim - ff$df
 
   idf       <-  (dim.unadj-idim)
-  logL.sat  <-  ff$logL + ff$lrt/2
+  logL.sat  <-  ff$logL + ff$dev/2
 
   aic       <-  -2*ff$logL + 2*dim.unadj
   bic       <-  -2*ff$logL + log(ff$n.obs)*dim.unadj
 
   dimension <- c(mod.dim=dim.unadj, sat.dim=sat.dim, i.dim=idim,df=ff$df,idf=idf)
   
-  ans   <- list(lrt=ff$lrt, ideviance=ilrt, logL.sat=logL.sat,
+  ans   <- list(dev=ff$dev, ideviance=idev, logL.sat=logL.sat,
                 aic=aic, bic=bic,
                 dimension=dimension
                 )
 
-  ff$S <- ff$n.obs <- ff$lrt <- ff$df <- NULL
+  ff$S <- ff$n.obs <- ff$dev <- ff$df <- NULL
   ans <- c(ff,ans)
   
   object$fitinfo  <- ans

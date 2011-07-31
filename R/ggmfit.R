@@ -63,10 +63,10 @@ ggmfit <- function(S, n.obs, glist, start=NULL,
 
   dimnames(xxx$K) <- dimnames(S)
   detK  <- det(xxx$K)
-  lrt   <- -n.obs * log(det(S %*% xxx$K))            ## deviance to the saturated model  
+  dev   <- -n.obs * log(det(S %*% xxx$K))            ## deviance to the saturated model  
   df    <-  sum(xxx$K==0) / 2
 
-  ans  <- list(lrt=lrt, df=df, detK=detK, nvar=nvar,S=S,n.obs=n.obs)
+  ans  <- list(dev=dev, df=df, detK=detK, nvar=nvar,S=S,n.obs=n.obs)
   ans   <- c(ans, xxx)
   
   return(ans)  
@@ -135,7 +135,7 @@ ggmfitr <- function(S, n.obs, glist, start=NULL,
 
   df <- sum(K[upper.tri(K)] == 0)
   #ans <- list(K=K, logL=logL, converged=converged, itcount=itcount)
-  ans <- list(lrt=-2*logL, df=df, logL=logL, K=K, S=S,n.obs=n.obs,
+  ans <- list(dev=-2*logL, df=df, logL=logL, K=K, S=S,n.obs=n.obs,
               itcount=itcount, converged=converged,logLvec=logLvec)
   return(ans)
 }

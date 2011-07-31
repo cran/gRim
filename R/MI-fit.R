@@ -21,7 +21,7 @@ fit.mModel <- function(object, method="general", details=0, eps.parm=1e-6, maxit
   logL.ind <- sum(n.obs*log(i.model$fit/NN))- NN*qq/2 * log(2*pi) - NN/2 * sum(log(diag(SS.ind))) - NN*qq/2
 
   ans$ideviance <- ans$logL - logL.ind
-  ans$lrt       <- logL.sat - ans$logL
+  ans$dev       <- logL.sat - ans$logL
 
   ans$aic       <-  -2*ans$logL + 2*ans$dimension['mod.dim']
   ans$bic       <-  -2*ans$logL + log(nrow(object$datainfo$data))*ans$dimension['mod.dim']

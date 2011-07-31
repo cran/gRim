@@ -5,7 +5,7 @@ logLik.iModel <- function(object,...)
 ## Returns (df, AIC=-2logL + k df), so the objective is to mimimize this quantity
 ##
 extractAIC.iModel <- function(fit, scale, k = 2, ...){
-  c(fit$fitinfo$df, fit$fitinfo$lrt - 2*fit$fitinfo$dimension["df"])
+  c(fit$fitinfo$df, fit$fitinfo$dev - 2*fit$fitinfo$dimension["df"])
 }
 
 summary.iModel <- function(object, ...){

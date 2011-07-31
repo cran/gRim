@@ -28,7 +28,7 @@ print.iModel <- function(x, ...){
     cat(sprintf(" ideviance : %14.2f idf  : %4d bic : %12.2f \n",
                 x$fitinfo$ideviance,  dimension["idf"], x$fitinfo$bic))
     cat(sprintf(" deviance  : %14.2f df   : %4d \n",
-                x$fitinfo$lrt,        dimension["df"]))
+                x$fitinfo$dev,        dimension["df"]))
   }
   
 

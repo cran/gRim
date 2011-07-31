@@ -20,10 +20,8 @@ dmod(formula, data, marginal, interactions=NULL, fit = TRUE, details=0)
     matrix).
     Notice that there are certain model
     specification shortcuts, see Section 'details' below.}
-  \item{data}{A table}
-%   \item{context}{Restrict attention to a (multidimensional) slice of the
-%     table; the slide being given by specific levels of certain
-%     variables. See 'examples' below. }
+  \item{data}{Either a table or a dataframe. In the latter case, the
+    dataframe will be coerced to a table. See 'details' below.}
   \item{interactions}{A number given the highest order interactions in
     the model, see Section 'details' below.}
   \item{marginal}{Should only a subset of the variables be used in
@@ -31,15 +29,27 @@ dmod(formula, data, marginal, interactions=NULL, fit = TRUE, details=0)
   \item{fit}{Should the model be fitted.}
   \item{details}{Control the amount of output; for debugging purposes.}
 }
+
 \details{
   The independence model can be specified as \code{~.^1} and the
-  saturated model as \code{~.^.}. The \code{marginal}
-  argument can be used for specifying the independence or saturated
-  models for only a subset of the variables.
-  
+  saturated model as \code{~.^.}.
   Setting e.g. \code{interactions=3} implies that there will be at most
   three factor interactions in the model. 
   
+  Data can be specified as a table
+  of counts or as a dataframe. If data is a dataframe then it will be
+  converted to a table (using \code{xtabs()}). This means that if the
+  dataframe contains numeric values then the you can get a very sparse
+  and high dimensional table. When a dataframe contains numeric values
+  it may be worthwhile to discretize data using the \code{cut()}
+  function.
+
+  The \code{marginal} argument can be used for specifying the
+  independence or saturated models for only a subset of the
+  variables. When \code{marginal} is given the corresponding marginal
+  table of data is formed and used in the analysis (notice that this is
+  different from the behaviour of \code{loglin()} which uses the full
+  table. 
 }
 \value{
   An object of class \code{dModel}

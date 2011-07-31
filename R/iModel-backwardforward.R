@@ -96,7 +96,7 @@ backward <- function(object, criterion="aic", alpha=NULL, type="decomposable", s
              }
              )
   .infoPrint(details, 1,
-             cat(sprintf("Initial model: is graphical=%s is decompsable=%s\n",
+             cat(sprintf("Initial model: is graphical=%s is decomposable=%s\n",
                          isgsd[1], isgsd[2])))
 
   ##edgeMAT <- getInEdges(object$glist, type)
@@ -161,7 +161,7 @@ forward <- function(object, criterion="aic", alpha=NULL, type="decomposable", se
                  comp.op   <- `<`
                  outstring <- "change.AIC"
                  crit.str  <- "aic"},
-         "test"={opt.op    <- which.max
+         "test"={opt.op    <- which.min
                  comp.op   <- `<`
                  outstring <- "p.value"
                  crit.str  <- "p.value"
@@ -184,7 +184,7 @@ forward <- function(object, criterion="aic", alpha=NULL, type="decomposable", se
              }
              )
   .infoPrint(details, 1,
-             cat(sprintf("Initial model: is graphical=%s is decompsable=%s\n",
+             cat(sprintf("Initial model: is graphical=%s is decomposable=%s\n",
                          isgsd[1], isgsd[2])))
 
   #edgeMAT <- getOutEdges(object$glist, type)
@@ -193,31 +193,35 @@ forward <- function(object, criterion="aic", alpha=NULL, type="decomposable", se
 
   repeat{
     #amat    <- ugList(object$glist, result="matrix")
-      amat <- glist2adjMAT(object$glist)
-      testMAT   <- testFun(object, edgeMAT, comp.op=comp.op, crit.str=crit.str,
-                            alpha=alpha, k=k, amat=amat, ...)
-      if (details>=2) print(testMAT,row.names=FALSE, digits=4)
+    amat <- glist2adjMAT(object$glist)
+    testMAT   <- testFun(object, edgeMAT, comp.op=comp.op, crit.str=crit.str,
+                         alpha=alpha, k=k, amat=amat, ...)
+    if (details>=2) print(testMAT,row.names=FALSE, digits=4)
+    
+    statvec   <- testMAT[,crit.str]
+    opt.idx   <- opt.op(statvec)
 
-      statvec   <- testMAT[,crit.str]
-      opt.idx   <- opt.op(statvec)
-
-      if (comp.op( statvec[opt.idx], alpha)) {
-          opt.edge    <- as.character(testMAT[opt.idx,c("V1","V2")])
-
-          if (details>=1)
-              cat(sprintf("  %s %9.4f Edge added: %s\n",
-                          outstring, statvec[opt.idx], .toString(opt.edge)))
-
-          object  <- update(object, list(add.edge=opt.edge))
-          #edgeMAT <- getOutEdges(object$glist,type)
-          edgeMAT <- getEdges(object$glist,type=type,ingraph=FALSE)
-          edgeMAT <- .subtract.fix(fixoutMAT, edgeMAT, vn)
-          if (nrow(edgeMAT)==0 | itcount==steps)
-              break
-      } else {
-          break
-      }
-      itcount <- itcount + 1
+##     print(statvec)
+##     print(opt.idx)
+##     print(testMAT)
+##     print(statvec[opt.idx])
+    if (comp.op( statvec[opt.idx], alpha)) {
+      opt.edge    <- as.character(testMAT[opt.idx,c("V1","V2")])
+      
+      if (details>=1)
+        cat(sprintf("  %s %9.4f Edge added: %s\n",
+                    outstring, statvec[opt.idx], .toString(opt.edge)))
+      
+      object  <- update(object, list(add.edge=opt.edge))
+                                        #edgeMAT <- getOutEdges(object$glist,type)
+      edgeMAT <- getEdges(object$glist,type=type,ingraph=FALSE)
+      edgeMAT <- .subtract.fix(fixoutMAT, edgeMAT, vn)
+      if (nrow(edgeMAT)==0 | itcount==steps)
+        break
+    } else {
+      break
+    }
+    itcount <- itcount + 1
   }
   return(object)
 }
