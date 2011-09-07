@@ -23,7 +23,7 @@ print.iModelsummary <- function(x,...){
   cat(sprintf("is graphical=%s; is decomposable=%s\n", x$isGraphical, x$isDecomposable))
   cat("generators (glist):\n")
   str(x$glist, give.head=FALSE, comp.str=" ", no.list=TRUE)
-  cat("EXPERIMENTAL: components: ", names(x),"\n")
+  #cat("EXPERIMENTAL: components: ", names(x),"\n")
   invisible(x)
 }
 

@@ -1,3 +1,9 @@
+2011-09-07 Søren Højsgaard <sorenh@agrsci.dk>	
+
+	* Minor issue regarding charmatch vs match fixed
+
+	* Version 0.1.2 uploaded
+
 2011-07-30 Søren Højsgaard <sorenh@agrsci.dk>	
 
 	* dmod now also accepts data as a dataframe (and not just as a

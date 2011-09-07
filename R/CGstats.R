@@ -20,10 +20,9 @@ CGstats.data.frame <- function(object, varnames=NULL, homogeneous=TRUE, simplify
   } else {
     use.idx <- match(varnames, names(object))
   }
-
   
   zzz <- unlist(lapply(object, is.numeric))
-  
+
   cont.idx <- intersect(which(zzz),  use.idx)
   disc.idx <- intersect(which(!zzz), use.idx)
   

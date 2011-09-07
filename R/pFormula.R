@@ -11,7 +11,7 @@ pFormula <- function (formula, varNames, marginal=NULL, interactions=NULL, v.sep
     })
 
     modnames <- uniquePrim(unlist(list.formula))
-    if(any(is.na(charmatch(modnames, used.var))))
+    if(any(is.na(match(modnames, used.var))))
       stop("Variables in model not contained in the variable set. Perhaps a problem with 'marginal'?")
     
     list.formula

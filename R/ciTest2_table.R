@@ -53,13 +53,17 @@ ciTest_table <- function(x, set=NULL, statistic="dev", method="chisq", adjust.df
   dim.v1 <- dn[1]
   dim.v2 <- dn[2]
   dim.R  <- prod(dn[-(1:2)])
+
   t.v1R <- tableMargin(x, c(v1,R))
+
   t.v2R <- tableMargin(x, c(v2,R))
 
   ## Fit table
   if (length(R)){
+
     t.R   <- tableMargin(x, R)
     fit.table <- tablePerm(tableOp(tableOp(t.v1R, t.v2R), t.R, "/"), vn)
+
   } else {
     fit.table <- tablePerm(tableOp(t.v1R, t.v2R), vn)/sum(x)
   }
@@ -73,6 +77,8 @@ ciTest_table <- function(x, set=NULL, statistic="dev", method="chisq", adjust.df
   tobs[!is.finite(tobs)] <- 0
   tobsGlobal <- sum(tobs)
 
+
+  
   ## Calculate df with or without adjustment for sparsity
   if (adjust.df){
     t.v1Rmat    <- matrix(t.v1R, nr=dim.R,byrow=TRUE)

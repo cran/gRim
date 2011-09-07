@@ -65,7 +65,7 @@ dmod <- function(formula, data, marginal=NULL, interactions=NULL, fit=TRUE, deta
   ##
   glistNUM <- lapply(glist,
                      function(ll) {
-                       charmatch(ll, varNames)
+                       match(ll, varNames)
                      })
   ret      <- list(glistNUM       = glistNUM,
                    isDecomposable = zzz[2],
@@ -101,7 +101,7 @@ fit.dModel <- function(object, engine="loglin", print=FALSE, ...){
     glistNUM <- object$glistNUM
   else
     glistNUM <- lapply(object$glist, function(ll) {
-      charmatch(ll, object$varNames)
+      match(ll, object$varNames)
     })
 
   sat.dim.unadj   <- prod(dim(object$datainfo$data)) - 1

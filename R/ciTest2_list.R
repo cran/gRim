@@ -45,9 +45,9 @@ ciTest_mvn <- function(x,set=NULL, statistic="DEV",...){
   v1R <- c(vn[1],R)
   v2R <- c(vn[2],R)
 
-  v1R.idx <- charmatch(v1R, vn)
-  v2R.idx <- charmatch(v2R, vn)
-  R.idx   <- charmatch(R,   vn)
+  v1R.idx <- match(v1R, vn)
+  v2R.idx <- match(v2R, vn)
+  R.idx   <- match(R,   vn)
 
   d <- n.obs * (log(det(S[v1R.idx, v1R.idx, drop=FALSE])) +
                 log(det(S[v2R.idx, v2R.idx, drop=FALSE])) -

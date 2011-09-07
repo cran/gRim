@@ -104,6 +104,31 @@ ciTest_mvn(cov.wt(carcass, method='ML'), set=~Fat11+Meat11+Fat12)
 
 
 cleanEx()
+nameEx("ciTest_ordinal")
+### * ciTest_ordinal
+
+flush(stderr()); flush(stdout())
+
+### Name: ciTest_ordinal
+### Title: A function to compute Monte Carlo and asymptotic tests of
+###   conditional independence for ordinal and/or nominal variables.
+### Aliases: ciTest_ordinal
+### Keywords: htest
+
+### ** Examples
+
+library(gRim)
+data(dumping)
+ciTest_ordinal(dumping, c(2,1,3),stat="jt",N=1000)
+ciTest_ordinal(dumping, c("Operation","Symptom","Centre"),stat="jt",N=1000)
+ciTest_ordinal(dumping, ~Operation+Symptom+Centre,stat="jt",N=1000)
+
+data(reinis)
+ciTest_ordinal(reinis, c(1,3,4:6),N=1000)
+
+
+
+cleanEx()
 nameEx("ciTest_table")
 ### * ciTest_table
 

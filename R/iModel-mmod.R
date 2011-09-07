@@ -54,7 +54,7 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
   ##
   glistNUM <- lapply(glist,
                      function(ll) {
-                       charmatch(ll, varNames)
+                       match(ll, varNames)
                      })
 
   modelinfo <- .mModelinfo(glist, datainfo)
@@ -89,7 +89,7 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
   
   for (ii in 1:length(glist)){
     gen.names <- glist[[ii]]
-    gen.num   <- charmatch(gen.names,data.names)
+    gen.num   <- match(gen.names,data.names)
     glist.num[[ii]]      <- gen.num 
     glist.disc[[ii]]     <- gen.names[disc.indic[gen.num]==1]
     glist.cont[[ii]]     <- gen.names[disc.indic[gen.num]==0]
@@ -157,7 +157,7 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
 
     data.names <- names(dd)
     
-    zzz <- charmatch(vn, data.names)
+    zzz <- match(vn, data.names)
     if (any(is.na(zzz)))
       stop("variables: ", vn[is.na(zzz)], " are not in data\n")
     

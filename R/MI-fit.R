@@ -331,7 +331,14 @@ print.MIfit <- function(x,...){
 ##  cat(".update.ghkParms - calling .mModel_parmdiff\n")
   marg.d.parms <- .mModel_parmdiff(AApms, EEpms)
   .infoPrint(details,5, cat(sprintf("PARMDIF=%f\n", marg.d.parms)))
-  if (marg.d.parms>d.parms.crit){ ##FIXME: Hack to avoid calling mModel_parmdiff
+
+##   print(marg.d.parms)
+##   print(d.parms.crit)
+
+  if (marg.d.parms>d.parms.crit){
+
+
+    ##FIXME: Hack to avoid calling mModel_parmdiff
 ##  if (TRUE){
 
     if (details>=5){
@@ -446,15 +453,6 @@ print.MIfit <- function(x,...){
 }
 
 
-
-
-
-
-
-
-
-
-
 .mModel_parmdiff <- function(curr.Mparms, prev.Mparms){
 
   curr.Mparms <- unclass(  curr.Mparms )
@@ -464,12 +462,14 @@ print.MIfit <- function(x,...){
   mu.idx    <- 2
   Sigma.idx <- 3
   N.idx     <- 5
-
+  
   if (curr.Mparms[['gentype']]=="discrete"){
+
     N   <- prev.Mparms[[N.idx]]
     cp  <- curr.Mparms[[p.idx]]
     ppp <- as.numeric(N * abs((cp - prev.Mparms[[p.idx]])) /sqrt((N * cp + 1)))
     ans <- max(ppp)
+
   } else {
     N   <- prev.Mparms[['N']]
     cp  <- curr.Mparms[[p.idx]]

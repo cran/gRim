@@ -29,17 +29,19 @@ print.testdelete <- function(x,  ...){
 
 testdelete.iModel <- function(object, edge, k=2, details=1, ...){
 
-    edge <- rhsFormula2list(edge)[[1]]
-    if (length(edge)!=2){
-        stop(paste("Not a valid edge: ", paste(edge, collapse=":"), " \n"))
-    }
-
-    model.type <- class(object)[1]
-
-    if (is.null((amat <- list(...)$amat)))
-      amat <- glist2adjMAT(object$glist)
-
-    ## Is edge is in model? stop if not
+  ## cat("testdelete.iModel\n")
+  edge <- rhsFormula2list(edge)[[1]]
+  if (length(edge)!=2){
+    stop(paste("Not a valid edge: ", paste(edge, collapse=":"), " \n"))
+  }
+  
+  model.type <- class(object)[1]
+  
+  
+  if (is.null((amat <- list(...)$amat)))
+    amat <- glist2adjMAT(object$glist)
+  
+  ## Is edge is in model? stop if not
     if (!subsetof(edge, colnames(amat)))
       stop(cat("variables:", edge, "not in model\n"))
     if (amat[edge[1],edge[2]]!=1)
@@ -67,7 +69,7 @@ testdelete.iModel <- function(object, edge, k=2, details=1, ...){
       set    <- c(edge, setdiffPrim(hostcq, edge))
 
       ##cat(sprintf("CHK: edge: %s hostcq: %s\n", toString(edge), toString(hostcq)))
-      
+
       switch(model.type,
              "cModel"={
                ans <- ciTest_mvn(list(cov=object$datainfo$S,n.obs=object$datainfo$n),

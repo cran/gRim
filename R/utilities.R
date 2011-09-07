@@ -25,7 +25,7 @@
 ## reduceSet(c(1,2,3,4),c(1,2,3))
 .reduceSet <- function(gen,e){  
   if (length(e)==2){
-    i <- charmatch(e,gen)
+    i <- match(e,gen)
     ans <- list(gen[-i[1]], gen[-i[2]])
   } else {
     le <- length(e)

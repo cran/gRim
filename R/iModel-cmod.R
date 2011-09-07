@@ -54,7 +54,7 @@ cmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0){
 
   glistNUM <- lapply(glist,
                      function(ll) {
-                       charmatch(ll, varNames)
+                       match(ll, varNames)
                      })
 
   ret      <- list(glist          = glist,

@@ -28,7 +28,7 @@ effloglin <- function(table, margin, fit=FALSE, eps=0.01, iter=20, print=TRUE){
     gg <- margin[[kk]]
     for (ii in seqcliq){
       ##cat ("ii", ii, "\n")
-      zz <- charmatch(gg, cliq[[ii]])
+      zz <- match(gg, cliq[[ii]])
       if (!any(is.na(zz))){
         ghost[kk] <- ii
         break
@@ -92,7 +92,7 @@ effloglin <- function(table, margin, fit=FALSE, eps=0.01, iter=20, print=TRUE){
   vl <- unlist(lapply(stlist, dimnames), recursive=FALSE)[vn]
   nlev <- unlistPrim(lapply(vl, length))
   
-  gn <- lapply(margin, charmatch, vn)
+  gn <- lapply(margin, match, vn)
   nparm <- .loglinGenDim(gn, nlev)
   df    <- prod(nlev) - 1 - nparm
   

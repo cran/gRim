@@ -20,7 +20,7 @@ ggmfit <- function(S, n.obs, glist, start=NULL,
   usevar <- uniquePrim(unlist(glist))       
 
   ## Check that the used variables are in S
-  zzz <- charmatch(usevar, data.vn)
+  zzz <- match(usevar, data.vn)
   if (any(is.na(zzz)))
     stop("Variables ", usevar[is.na(zzz)], " not in data\n")
 
@@ -35,7 +35,7 @@ ggmfit <- function(S, n.obs, glist, start=NULL,
   nvar <- length(vn)
   
   ## Numerical (indices) representation of glist
-  glist.num <- lapply(glist, charmatch, data.vn)
+  glist.num <- lapply(glist, match, data.vn)
 
   glen    <- sapply(glist.num,length)
   ng      <- length(glist.num)
@@ -90,7 +90,7 @@ ggmfitr <- function(S, n.obs, glist, start=NULL,
   dimnames(K)<-dimnames(S)
   vn <- colnames(S); #print(vn)
 
-  x <- lapply(glist, charmatch, vn)
+  x <- lapply(glist, match, vn)
   
   varIndex=1:nrow(K)
   itcount=0

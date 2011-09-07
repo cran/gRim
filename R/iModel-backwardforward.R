@@ -103,21 +103,28 @@ backward <- function(object, criterion="aic", alpha=NULL, type="decomposable", s
   edgeMAT <- getEdges(object$glist, type=type, ingraph=TRUE)
   edgeMAT <- .subtract.fix(fixinMAT,  edgeMAT, vn)
 
+  if (nrow(edgeMAT)==0){
+    if (details>=1)
+      cat(sprintf("No edges can be removed\n"))
+    return(NULL)
+  }
+  
   repeat{
-    #amat    <- ugList(object$glist, result="matrix")
-      amat <- glist2adjMAT(object$glist)
-      testMAT <- testFun(object, edgeMAT, comp.op=comp.op, crit.str=crit.str,
-                          alpha=alpha, k=k, amat=amat, ...)
-
-      if (details>=2)
-          print(testMAT,row.names=FALSE, digits=4)
-
-      statvec   <- testMAT[,crit.str]
-      opt.idx   <- opt.op(statvec)
-
-      if (comp.op( statvec[opt.idx], alpha)) {
-          opt.edge    <- as.character(testMAT[opt.idx,c("V1","V2")])
-
+                                        #amat    <- ugList(object$glist, result="matrix")
+    amat <- glist2adjMAT(object$glist)
+    
+    testMAT <- testFun(object, edgeMAT, comp.op=comp.op, crit.str=crit.str,
+                       alpha=alpha, k=k, amat=amat, ...)
+    
+    if (details>=2)
+      print(testMAT,row.names=FALSE, digits=4)
+    
+    statvec   <- testMAT[,crit.str]
+    opt.idx   <- opt.op(statvec)
+    
+    if (comp.op( statvec[opt.idx], alpha)) {
+      opt.edge    <- as.character(testMAT[opt.idx,c("V1","V2")])
+      
           if (details>=1)
               cat(sprintf("  %s %9.4f Edge deleted: %s\n",
                           outstring, statvec[opt.idx], .toString(opt.edge)))
@@ -191,6 +198,13 @@ forward <- function(object, criterion="aic", alpha=NULL, type="decomposable", se
   edgeMAT <- getEdges(object$glist, type=type, ingraph=FALSE)
   edgeMAT <- .subtract.fix(fixoutMAT,  edgeMAT, vn)
 
+  if (nrow(edgeMAT)==0){
+    if (details>=1)
+      cat(sprintf("No edges can be added\n"))
+    return(NULL)
+  }
+  
+  
   repeat{
     #amat    <- ugList(object$glist, result="matrix")
     amat <- glist2adjMAT(object$glist)
