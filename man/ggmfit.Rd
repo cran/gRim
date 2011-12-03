@@ -36,7 +36,9 @@ ggmfitr(S, n.obs, glist, start=NULL, eps=1e-12, iter=1000, details=0, ...)
 
 }
 %\references{FIXME}
-\author{Søren Højsgaard, sorenh@agrsci.dk}
+\author{
+  Søren Højsgaard, sorenh at mail dot dk
+}
 % \note{ ~~further notes~~ 
 
 %  ~Make other sections like Warning with \section{Warning }{....} ~

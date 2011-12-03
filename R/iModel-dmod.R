@@ -71,8 +71,16 @@ dmod <- function(formula, data, marginal=NULL, interactions=NULL, fit=TRUE, deta
                    isDecomposable = zzz[2],
                    isGraphical    = zzz[1]
                    )
+##   cat(".dModel_finalize\n")
+##   print(ret)
   return(ret)
 }
+
+
+
+
+
+
 
 
 fitted.dModel <- function(object,...){

@@ -35,7 +35,9 @@ effloglin(table, margin, fit = FALSE, eps = 0.01, iter=20, print = TRUE)
   ...
 }
 %\references{}
-\author{Søren Højsgaard, sorenh@agrsci.dk}
+\author{
+  Søren Højsgaard, sorenh at mail dot dk
+}
 % \note{ ~~further notes~~ 
 
 %  ~Make other sections like Warning with \section{Warning }{....} ~

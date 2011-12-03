@@ -1,5 +1,8 @@
 
 update.iModel <- function(object, items, fit=TRUE, details=0, ...){
+
+##   cat("update.iModel\n")
+##   print(class(object))
   
   glist           <- modify_glist(object$glist, items)
   object$glist    <- glist

@@ -57,7 +57,14 @@ backward <- function(object, criterion="aic", alpha=NULL, type="decomposable", s
   type   <- match.arg(type,   c("decomposable", "unrestricted"))
   search <- match.arg(search, c("headlong",     "all"))
 
-  isgsd  <- isGSD_glist(object$glist)
+  ## Need this because checking for decomposability is special for mixed models.
+  if (inherits(object, "mModel")){
+    discrete <- object$datainfo$disc.names  
+  } else {
+    discrete <- NULL
+  }
+  
+  isgsd  <- isGSD_glist(object$glist, discrete=discrete)
   vn     <- object$varNames
 
   if (!all(isgsd)){
@@ -93,14 +100,13 @@ backward <- function(object, criterion="aic", alpha=NULL, type="decomposable", s
              } else {
                cat(sprintf("BACKWARD: type=%s search=%s, criterion=%s, alpha=%4.2f \n",
                            type, search, criterion, alpha ))
-             }
-             )
+             })
   .infoPrint(details, 1,
              cat(sprintf("Initial model: is graphical=%s is decomposable=%s\n",
                          isgsd[1], isgsd[2])))
 
-  ##edgeMAT <- getInEdges(object$glist, type)
-  edgeMAT <- getEdges(object$glist, type=type, ingraph=TRUE)
+  amat    <- glist2adjMAT(object$glist)
+  edgeMAT <- getEdges(amat, type=type, ingraph=TRUE, discrete=discrete)
   edgeMAT <- .subtract.fix(fixinMAT,  edgeMAT, vn)
 
   if (nrow(edgeMAT)==0){
@@ -110,14 +116,9 @@ backward <- function(object, criterion="aic", alpha=NULL, type="decomposable", s
   }
   
   repeat{
-                                        #amat    <- ugList(object$glist, result="matrix")
-    amat <- glist2adjMAT(object$glist)
-    
     testMAT <- testFun(object, edgeMAT, comp.op=comp.op, crit.str=crit.str,
                        alpha=alpha, k=k, amat=amat, ...)
-    
-    if (details>=2)
-      print(testMAT,row.names=FALSE, digits=4)
+    if (details>=2) print(testMAT, row.names=FALSE, digits=4)
     
     statvec   <- testMAT[,crit.str]
     opt.idx   <- opt.op(statvec)
@@ -125,20 +126,19 @@ backward <- function(object, criterion="aic", alpha=NULL, type="decomposable", s
     if (comp.op( statvec[opt.idx], alpha)) {
       opt.edge    <- as.character(testMAT[opt.idx,c("V1","V2")])
       
-          if (details>=1)
-              cat(sprintf("  %s %9.4f Edge deleted: %s\n",
-                          outstring, statvec[opt.idx], .toString(opt.edge)))
+      if (details>=1) cat(sprintf("  %s %9.4f Edge deleted: %s\n",
+            outstring, statvec[opt.idx], .toString(opt.edge)))
 
-          object  <- update(object, list(drop.edge=opt.edge))
-          #edgeMAT <- getInEdges(object$glist,type)
-          edgeMAT <- getEdges(object$glist,type=type, ingraph=TRUE)
-          edgeMAT <- .subtract.fix(fixinMAT, edgeMAT, vn)
-          if (nrow(edgeMAT)==0 | itcount==steps)
-              break
-      } else {
-          break
-      }
-      itcount <- itcount + 1
+      ## Update model object and prepare to start all over again:
+      object  <- update(object, list(drop.edge=opt.edge))
+      amat    <- glist2adjMAT(object$glist)
+      edgeMAT <- getEdges(amat, type=type, ingraph=TRUE, discrete=discrete)
+      edgeMAT <- .subtract.fix(fixinMAT, edgeMAT, vn)
+      if (nrow(edgeMAT)==0 | itcount==steps) { break }
+    } else {
+      break
+    }
+    itcount <- itcount + 1
   }
   return(object)
 }
@@ -151,9 +151,15 @@ forward <- function(object, criterion="aic", alpha=NULL, type="decomposable", se
   type   <- match.arg(type,   c("decomposable", "unrestricted"))
   search <- match.arg(search, c("headlong",     "all"))
 
-
-  isgsd <- isGSD_glist(object$glist)
-  vn    <- object$varNames
+  ## Need this because checking for decomposability is special for mixed models.
+  if (inherits(object, "mModel")){
+    discrete <- object$datainfo$disc.names  
+  } else {
+    discrete <- NULL
+  }
+  
+  isgsd  <- isGSD_glist(object$glist, discrete=discrete)
+  vn     <- object$varNames
 
   if (!all(isgsd)){
     type <- "unrestricted"
@@ -194,8 +200,8 @@ forward <- function(object, criterion="aic", alpha=NULL, type="decomposable", se
              cat(sprintf("Initial model: is graphical=%s is decomposable=%s\n",
                          isgsd[1], isgsd[2])))
 
-  #edgeMAT <- getOutEdges(object$glist, type)
-  edgeMAT <- getEdges(object$glist, type=type, ingraph=FALSE)
+  amat    <- glist2adjMAT(object$glist)
+  edgeMAT <- getEdges(amat, type=type, ingraph=FALSE, discrete=discrete)
   edgeMAT <- .subtract.fix(fixoutMAT,  edgeMAT, vn)
 
   if (nrow(edgeMAT)==0){
@@ -204,10 +210,7 @@ forward <- function(object, criterion="aic", alpha=NULL, type="decomposable", se
     return(NULL)
   }
   
-  
   repeat{
-    #amat    <- ugList(object$glist, result="matrix")
-    amat <- glist2adjMAT(object$glist)
     testMAT   <- testFun(object, edgeMAT, comp.op=comp.op, crit.str=crit.str,
                          alpha=alpha, k=k, amat=amat, ...)
     if (details>=2) print(testMAT,row.names=FALSE, digits=4)
@@ -215,23 +218,18 @@ forward <- function(object, criterion="aic", alpha=NULL, type="decomposable", se
     statvec   <- testMAT[,crit.str]
     opt.idx   <- opt.op(statvec)
 
-##     print(statvec)
-##     print(opt.idx)
-##     print(testMAT)
-##     print(statvec[opt.idx])
     if (comp.op( statvec[opt.idx], alpha)) {
       opt.edge    <- as.character(testMAT[opt.idx,c("V1","V2")])
       
-      if (details>=1)
-        cat(sprintf("  %s %9.4f Edge added: %s\n",
-                    outstring, statvec[opt.idx], .toString(opt.edge)))
-      
+      if (details>=1) cat(sprintf("  %s %9.4f Edge added: %s\n",
+            outstring, statvec[opt.idx], .toString(opt.edge)))
+
+      ## Update model object and prepare to start all over again:
       object  <- update(object, list(add.edge=opt.edge))
-                                        #edgeMAT <- getOutEdges(object$glist,type)
-      edgeMAT <- getEdges(object$glist,type=type,ingraph=FALSE)
+      amat    <- glist2adjMAT(object$glist)
+      edgeMAT <- getEdges(amat, type=type, ingraph=FALSE, discrete=discrete)
       edgeMAT <- .subtract.fix(fixoutMAT, edgeMAT, vn)
-      if (nrow(edgeMAT)==0 | itcount==steps)
-        break
+      if (nrow(edgeMAT)==0 | itcount==steps) { break }
     } else {
       break
     }

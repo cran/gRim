@@ -65,6 +65,9 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
                    isDecomposable = zzz[2],
                    isGraphical    = zzz[1]
                    )
+##   cat(".mModel_finalize\n")
+##   print(ret)
+
   return(ret)
 }
 

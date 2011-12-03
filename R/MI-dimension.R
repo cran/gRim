@@ -69,10 +69,14 @@ mmod_dimension <- function(object){
   
   ## saturated model dimension
   ## -------------------------
-  sat.dim <- prod(d.dim-1) +  ## discrete 
-      n.cont * prod(d.dim) +  ## linear 
-      n.cont*(n.cont+1)/2     ## quadratic
+##   sat.dim <- prod(d.dim-1) +  ## discrete 
+##     n.cont * prod(d.dim) +    ## linear 
+##       n.cont*(n.cont+1)/2     ## quadratic
 
+  sat.dim <- prod(d.dim)-1 +  ## discrete 
+    n.cont * prod(d.dim) +    ## linear 
+      n.cont*(n.cont+1)/2     ## quadratic
+  
   ## independence model dimension
   ## ----------------------------
   i.dim <- sum(d.dim - 1) + 2*n.cont
