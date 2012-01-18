@@ -1,5 +1,5 @@
-cfc4e4f205dc2a138d64e90ba1dedc69 *ChangeLog
-a1c99d97691a368030c07bcb95a66130 *DESCRIPTION
+57f7c6bbf59c5ac69b4ff7f2d01763ad *ChangeLog
+ec0933b6a1682b6bfa27a7fb1b455e0f *DESCRIPTION
 787a3926ee8dc9d4a58474fda920e746 *NAMESPACE
 8fa121675a0b955f67b3a27e65de5811 *R/CGstats.R
 85ebee514bd1ac23c5dd951e88730d15 *R/GC-compare.R
@@ -42,9 +42,8 @@ d0e05b5585afc56350ab31dc52bdf209 *R/utilities.R
 685117ebfa906293ca27a4639313057b *R/zzz.R
 a2208519f3706461c688051d5ded648b *Wishlist.txt
 7c4fed338c5f645b90a5aa1d448eef50 *gRim-Ex.R
-a3f4b116122eb8dc5f0ae0ddee005a1a *inst/doc/GMIR.sty
 994131ee99f2a5550de5de3c67e972d2 *inst/doc/gRim.Rnw
-40d41a234f0c734f23ce0ffe11db4b31 *inst/doc/gRim.pdf
+3e10ba23c62f3df89625ab49c288913a *inst/doc/gRim.pdf
 de4f64aa74dded9a2fbdfbfd98d99f9a *man/CGstats.Rd
 318cf030be242ba40372347c71e45dbb *man/ciTest-generic2.Rd
 d8ff6b3847af1336a8dec71776fa5e42 *man/ciTest_df.Rd
@@ -72,3 +71,5 @@ d2d14de06cb10e5f83eb3b7b2029b6b6 *src/Makevars
 562573740fdef963466ee99a194e5cc2 *src/_utils_print.c
 0ffcaf5dfc2d17c001197449f1323c5d *src/_utils_print.h
 07b1b1655f616c8e26ef807330d3d4fa *src/ggmfit.c
+a3f4b116122eb8dc5f0ae0ddee005a1a *vignettes/GMIR.sty
+994131ee99f2a5550de5de3c67e972d2 *vignettes/gRim.Rnw
