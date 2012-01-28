@@ -31,9 +31,18 @@ print.iModelsummary <- function(x,...){
   c(object[[1]], object$df)
 }
 
+.glist2formula <- function (f) {
+  if (inherits(f, "formula")) 
+    return(f)
+  ans <- try(as.formula(paste("~", paste(unlist(lapply(f, paste, collapse = "*")), 
+                                         collapse = "+")), .GlobalEnv),silent=TRUE)
+  if (inherits(ans, "try-error"))
+    stop("Unable to create formula from list. \nCould be due to white space, strange characters etc. in variable names\n")
+}
 
 formula.iModel <- function(x,...){
-	list2rhsFormula(x$glist)
+	#list2rhsFormula(x$glist)
+  .glist2formula(x$glist)
 }
 
 terms.iModel <- function(x,...){

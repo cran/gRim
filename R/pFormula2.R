@@ -94,7 +94,7 @@
 
          })
 
-  formula      <- list2rhsFormula(list.formula)
+  ##formula      <- list2rhsFormula(list.formula)
   ##print(formula)
   
   ##            cat("str.formula  :", str.formula, "\n")
@@ -102,7 +102,7 @@
   ##            cat("list.formula :\n"); print(list.formula)      
     
   value <- list(glist = list.formula,
-                formula = formula,
+                ##formula = formula,
                 ## str.formula = str.formula,                 
                 varnames = uniquePrim(unlist(list.formula)))
   return(value)

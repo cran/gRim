@@ -373,7 +373,7 @@ void C_schursubt(double *X, int *nrX, int *ncX,
   tmp1    = (double *) R_alloc(*n1**n2, sizeof(double));
   tmp2    = (double *) R_alloc(*n1**n2, sizeof(double));
   X22     = (double *) R_alloc(*n2**n2, sizeof(double));
-  double issymX22, issymX22inv, issymX22inv2;
+  //double issymX22, issymX22inv, issymX22inv2;
 
   C_submat(X, nrX, ncX, idx1, n1, idx2, n2, tmp1); // tmp1 = X.12 (n1 x n2)
   //Rprintf("X.12\n"); printmatd(tmp1, n1, n2);
