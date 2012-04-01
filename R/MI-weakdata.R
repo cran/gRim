@@ -55,8 +55,8 @@ weakMarginalData <- function(MIhet, disc=NULL, cont=NULL, type="pms", details=2)
   Sigma.A   <- MIhet$cov[c(.rowcol2idx(n.cont,Ac.idx)),,drop=FALSE]
   
 ### Allocate space for results
-  mu.A.marg      <- matrix(0, nc=A.dim,      nr=len.Ac)
-  Sigma.A.marg   <- matrix(0, nc=len.Ac,     nr=len.Ac)
+  mu.A.marg      <- matrix(0, ncol=A.dim,      nrow=len.Ac)
+  Sigma.A.marg   <- matrix(0, ncol=len.Ac,     nrow=len.Ac)
   QQ             <- rep(0, len.Ac^2)  
   ia        <- rep(1,length(Ad.idx)) ## The first cell (1,1,...,1)
   ## Iteration goes 
@@ -78,7 +78,7 @@ weakMarginalData <- function(MIhet, disc=NULL, cont=NULL, type="pms", details=2)
     ## SSD(ia) 
     S.jia  <- Sigma.A[,jia,drop=FALSE]
     vvv1   <- rowSumsPrim(.colmult(n.jia , S.jia))
-    sum.ssd.j  <- matrix(vvv1, nr=length(Ac.idx)) ## sum_{j:ja=ia} SSD(j)
+    sum.ssd.j  <- matrix(vvv1, nrow=length(Ac.idx)) ## sum_{j:ja=ia} SSD(j)
     
     mu.dif  <- mu.jia - mu.ia
     quad    <- .vMMt(n.jia, mu.dif)
@@ -106,7 +106,7 @@ weakMarginalData <- function(MIhet, disc=NULL, cont=NULL, type="pms", details=2)
   p.i      <- n.i / sum(n.i)
 
   ssdA.i   <- .colmult(n.i, Sigma.i)
-  sum.ssdA <- matrix(rowSumsPrim(ssdA.i), nr=length(Ac.idx))
+  sum.ssdA <- matrix(rowSumsPrim(ssdA.i), nrow=length(Ac.idx))
 
   mu.A     <- rowSumsPrim(.colmult(p.i, mu.i))
   mu.dif   <- mu.i - mu.A

@@ -1,3 +1,9 @@
+2012-04-01 Søren Højsgaard <sorenh@mail.dk>	
+
+	* Some c-functions (using inline package) have been added.
+
+	* Version 0.1-8 uploaded.
+
 2012-01-28 Søren Højsgaard <sorenh@mail.dk>	
 
 	* Right hand sided model formulae removed from model objects

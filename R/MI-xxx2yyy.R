@@ -26,7 +26,7 @@ pms2ghkParms <- function(parms){
            KK     <- .cholsolve(parms[["Sigma"]])
            Q      <- nrow(KK)
            #detSig <- 1/det(KK) ##FIXME: brug det.matrix isf.
-           detSig <- 1/c(determinant.matrix(KK, log=FALSE)[['modulus']])
+           detSig <- 1/c(determinant.matrix(KK, logarithm=FALSE)[['modulus']])
            mu     <- parms[["mu"]]           
            hh     <- KK %*% mu # h = Sigma.inv %*% mu
            quad   <- colSumsPrim(hh * mu)

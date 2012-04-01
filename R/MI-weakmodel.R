@@ -58,9 +58,9 @@ weakMarginalModel<- function(Mparms, disc=NULL,cont=NULL, type="pms", details=2)
   Sigma.tmp  <- Mparms[['Sigma']][Ac.idx,Ac.idx,drop=FALSE]
   
 ### Allocate space for results
-  mu.A.marg      <- matrix(0, nc=A.dim, nr=len.Ac)
+  mu.A.marg      <- matrix(0, ncol=A.dim, nrow=len.Ac)
   rownames(mu.A.marg) <- rownames(mu.tmp)
-  jia.mat        <- matrix(0, nc=A.dim, nr=length(Mparms$p)/A.dim)
+  jia.mat        <- matrix(0, ncol=A.dim, nrow=length(Mparms$p)/A.dim)
   QQ             <- rep.int(0, len.Ac^2)
   
 ### Iterate
@@ -85,7 +85,7 @@ weakMarginalModel<- function(Mparms, disc=NULL,cont=NULL, type="pms", details=2)
 ###   QQ           <- matrix(QQ, nr=len.Ac) 
 ###   Sigma.A.marg <- QQ + Sigma.tmp
 
-  QQ           <- matrix(QQ, nr=len.Ac) 
+  QQ           <- matrix(QQ, nrow=len.Ac) 
   Sigma.A.marg <- Sigma.tmp + QQ
   
   ans          <-list(p=p.A, mu=mu.A.marg, Sigma=Sigma.A.marg, gentype="mixed",

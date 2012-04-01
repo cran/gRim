@@ -81,8 +81,8 @@ ciTest_table <- function(x, set=NULL, statistic="dev", method="chisq", adjust.df
   
   ## Calculate df with or without adjustment for sparsity
   if (adjust.df){
-    t.v1Rmat    <- matrix(t.v1R, nr=dim.R,byrow=TRUE)
-    t.v2Rmat    <- matrix(t.v2R, nr=dim.R,byrow=TRUE)
+    t.v1Rmat    <- matrix(t.v1R, nrow=dim.R,byrow=TRUE)
+    t.v2Rmat    <- matrix(t.v2R, nrow=dim.R,byrow=TRUE)
     zzz <- (t.v1Rmat>0)*1
     if (!is.null(dim(zzz)))
       dim.v1.adj  <- rowSumsPrim(zzz)
@@ -106,7 +106,7 @@ ciTest_table <- function(x, set=NULL, statistic="dev", method="chisq", adjust.df
   dofGlobal <- sum(dofSlice)
   pGlobal   <- 1-pchisq(tobsGlobal, dofGlobal)
 
-  tobsSlice <- rowSumsPrim(matrix(tobs, nr=dim.R, byrow=TRUE))
+  tobsSlice <- rowSumsPrim(matrix(tobs, nrow=dim.R, byrow=TRUE))
   pSlice    <- 1-pchisq(tobsSlice, df=dofSlice)
 
   if (length(R) && slice.info){
@@ -204,9 +204,9 @@ ciTest_table <- function(x, set=NULL, statistic="dev", method="chisq", adjust.df
   ## is a configuration of R
   t1R  <-  tableMargin(x, v1R)
   t2R  <-  tableMargin(x, v2R)
-  t1R  <-  matrix(t1R, nr=dim.R, byrow=TRUE)
-  t2R  <-  matrix(t2R, nr=dim.R, byrow=TRUE)
-  xmat <-  matrix(x,   nr=dim.R, byrow=TRUE)
+  t1R  <-  matrix(t1R, nrow=dim.R, byrow=TRUE)
+  t2R  <-  matrix(t2R, nrow=dim.R, byrow=TRUE)
+  xmat <-  matrix(x,   nrow=dim.R, byrow=TRUE)
 
   ## Find observed statistics for each slice
   tobs.slice <- vector("numeric", dim.R)
@@ -220,7 +220,7 @@ ciTest_table <- function(x, set=NULL, statistic="dev", method="chisq", adjust.df
   }
 
   ## Find reference distribution for each slice
-  tref.slice      <- matrix(NA, nr=dim.R, nc=B)
+  tref.slice      <- matrix(NA, nrow=dim.R, ncol=B)
   n.extreme.slice <- vector("numeric", dim.R)
   for (ii in seq_len(nrow(t1R))){
     r.sum    <- t1R[ii,]

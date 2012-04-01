@@ -118,8 +118,8 @@ fit.dModel <- function(object, engine="loglin", print=FALSE, ...){
 
   if (object$isDecomposable){
     rr <- ripMAT(glist2adjMAT(object$glist))
-    dim.adj   <- .loglinDecDim(rr$cliques, rr$separators, table=object$datainfo$data, adjust=TRUE)
-    dim.unadj <- .loglinDecDim(rr$cliques, rr$separators, table=object$datainfo$data, adjust=FALSE)
+    dim.adj   <- .loglinDecDim(rr$cliques, rr$separators, tableinfo=object$datainfo$data, adjust=TRUE)
+    dim.unadj <- .loglinDecDim(rr$cliques, rr$separators, tableinfo=object$datainfo$data, adjust=FALSE)
   } else {
     dim.adj   <- NA
     dim.unadj <- .loglinGenDim(glistNUM, dim(object$datainfo$data))
