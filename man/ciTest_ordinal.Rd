@@ -46,7 +46,7 @@ A list including the test statistic, the asymptotic p-value and, when computed, 
 See Edwards D. (2000), "Introduction to Graphical Modelling", 2nd ed., Springer-Verlag, pp. 130-153.
 }
 \author{
-Flaminia Musella, David Edwards, Søren Højsgaard.
+Flaminia Musella, David Edwards, Søren Højsgaard sorenh@math.aau.dk
 }
 %\note{
 %%  ~~further notes~~

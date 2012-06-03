@@ -173,9 +173,10 @@ ciTest_table <- function(x, set=NULL, statistic="dev", method="chisq", adjust.df
 
   statistic <- match.arg(toupper(statistic), c("DEV",   "X2"))
 
-  .r2dtable <- function(n,r,c){
-    .Call("R_r2dtable", as.integer(n), as.integer(r), as.integer(c), PACKAGE = "base")
-  }
+##   .r2dtable <- function(n,r,c){
+##     #.Call("R_r2dtable", as.integer(n), as.integer(r), as.integer(c), PACKAGE = "base")
+##     r2dtable(n,r,c)
+##   }
 
   .devFun2 <- function(mm,expected){ # Calculates deviance for independence model in r x c table
     ii  <- mm * expected > 0
@@ -226,7 +227,7 @@ ciTest_table <- function(x, set=NULL, statistic="dev", method="chisq", adjust.df
     r.sum    <- t1R[ii,]
     c.sum    <- t2R[ii,]
     expected <- outerPrim(r.sum,c.sum)/sum(r.sum)
-    zzz      <- .r2dtable(B, r.sum, c.sum)
+    zzz      <- r2dtable(B, r.sum, c.sum)
     for (kk in seq_len(B))
       tref.slice[ii,kk] <- .statFun(zzz[[kk]],expected)
     n.extreme.slice[ii] <- sum(tobs.slice[ii] < tref.slice[ii,])

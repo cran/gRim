@@ -81,7 +81,7 @@ getOutEdgesMAT(adjmat, type = "unrestricted", discrete=NULL, ...)
 %% ~put references to the literature/web site here ~
 %%}
 \author{
-  Søren Højsgaard, sorenh at mail dot dk
+  Søren Højsgaard, sorenh@math.aau.dk
 }
 \note{
   These functions work on undirected graphs. The behaviour is

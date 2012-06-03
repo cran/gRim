@@ -36,7 +36,7 @@ effloglin(table, margin, fit = FALSE, eps = 0.01, iter=20, print = TRUE)
 }
 %\references{}
 \author{
-  Søren Højsgaard, sorenh at mail dot dk
+  Søren Højsgaard, sorenh@math.aau.dk
 }
 % \note{ ~~further notes~~ 
 

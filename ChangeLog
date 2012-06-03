@@ -1,3 +1,9 @@
+2012-06-04 Søren Højsgaard <sorenh@mail.dk>	
+
+	* Change to ciTest in order to pass CRAN test
+
+	* Version 0.1-9 uploaded
+
 2012-04-01 Søren Højsgaard <sorenh@mail.dk>	
 
 	* Some c-functions (using inline package) have been added.
