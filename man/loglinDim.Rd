@@ -50,7 +50,7 @@ loglinDecDim(glist, tableinfo, adjust=TRUE)
 }
 %\references{ ~put references to the literature/web site here ~ }
 \author{
-  Søren Højsgaard, sorenh@math.aau.dk
+  Søren Højsgaard, \email{sorenh@math.aau.dk}
 }
 %\note{ ~~further notes~~ 
 %

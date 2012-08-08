@@ -46,9 +46,7 @@ CGstats(object, varnames = NULL, homogeneous = TRUE, simplify = TRUE)
 %\references{
 %% ~put references to the literature/web site here ~
 %}
-\author{
-  Søren Højsgaard, sorenh@math.aau.dk
-}
+\author{  Søren Højsgaard, \email{sorenh@math.aau.dk} }
 %\note{
 %%  ~~further notes~~
 %}

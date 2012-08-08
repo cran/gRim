@@ -75,7 +75,9 @@ print.MIparms <- function(x,simplify=TRUE,useN=FALSE, ...){
 }
 
 .cholsolve <- function(a){
-  .Call("La_chol2inv",   .Call("La_chol", a, PACKAGE = "base"), ncol(a), PACKAGE = "base")
+
+  ##.Call("La_chol2inv",   .Call("La_chol", a, PACKAGE = "base"), ncol(a), PACKAGE = "base")
+  chol2inv(chol(a))
 }
 
 

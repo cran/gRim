@@ -1,7 +1,6 @@
 pkgname <- "gRim"
 source(file.path(R.home("share"), "R", "examples-header.R"))
 options(warn = 1)
-options(pager = "console")
 library('gRim')
 
 assign(".oldSearch", search(), pos = 'CheckExEnv')
@@ -36,8 +35,27 @@ CGstats(milkcomp, c(2,3,4), simplify=FALSE, homogeneous=FALSE)
 
 
 cleanEx()
-nameEx("ciTest-generic2")
-### * ciTest-generic2
+nameEx("ciTest_df")
+### * ciTest_df
+
+flush(stderr()); flush(stdout())
+
+### Name: ciTest_df
+### Title: Test for conditional independence in a dataframe
+### Aliases: ciTest_df
+### Keywords: htest
+
+### ** Examples
+
+data(milkcomp1)
+ciTest(milkcomp1, set=~tre+fat+pro)
+ciTest_df(milkcomp1, set=~tre+fat+pro)
+
+
+
+cleanEx()
+nameEx("ciTest_generic2")
+### * ciTest_generic2
 
 flush(stderr()); flush(stdout())
 
@@ -61,25 +79,6 @@ ciTest(cov.wt(carcass, method='ML'), set=~Fat11+Meat11+Fat12)
 ciTest(reinis, set=~smo+phy+sys)
 ciTest(milkcomp1, set=~tre+fat+pro)
 
-
-
-
-cleanEx()
-nameEx("ciTest_df")
-### * ciTest_df
-
-flush(stderr()); flush(stdout())
-
-### Name: ciTest_df
-### Title: Test for conditional independence in a dataframe
-### Aliases: ciTest_df
-### Keywords: htest
-
-### ** Examples
-
-data(milkcomp1)
-ciTest(milkcomp1, set=~tre+fat+pro)
-ciTest_df(milkcomp1, set=~tre+fat+pro)
 
 
 

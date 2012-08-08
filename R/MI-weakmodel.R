@@ -69,7 +69,7 @@ weakMarginalModel<- function(Mparms, disc=NULL,cont=NULL, type="pms", details=2)
 #  .infoPrint(details, 1, "flevels:",flevels, "ia:",ia, "A.levels:", A.levels, "\n")
   
   for (ii in 1:A.dim){
-    jia            <- margcell2entry(ia, Ad.idx, flevels)
+    jia            <- slice2entry(ia, Ad.idx, flevels)
     jia.mat[,ii]   <- jia
     p.jia          <- ppp[jia]
                                         #    cat(sprintf("ia: %s, jia: %s\n", .toString(ia), .toString(jia)))

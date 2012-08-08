@@ -61,7 +61,6 @@ pms2phkParms <- function(parms){
   return(val)
 }
 
-
 phk2ghkParms <- function(parms){
   parms <- unclass(parms)    
   switch(parms[['gentype']],
@@ -123,8 +122,6 @@ ghk2pmsParms<-function(parms){
   return(val)
 }
 
-
-
 phk2pmsParms<-function(parms){
   parms <- unclass(parms)  
   switch(parms[['gentype']],
@@ -175,15 +172,8 @@ ghk2phkParms<-function(parms){
 }
 
 
-
-
-
-
-
-
 ### Normalizes ghK representation
 ###
-
 .normalize.ghkParms <- function(parms){
 
   K.idx <- 3
@@ -206,9 +196,6 @@ ghk2phkParms<-function(parms){
   parms
 }
 
-
-
-
 CGstats2mmodParms <- function(parms, type="ghk"){
   type <- match.arg(type, c("ghk","pms"))
 
@@ -221,8 +208,7 @@ CGstats2mmodParms <- function(parms, type="ghk"){
 
 moment2pmsParms <- function(SS){
   parms <- list(p=SS$n.obs/sum(SS$n.obs), mu=SS$center, Sigma=SS$cov, n.total=sum(SS$n.obs), gentype="mixed")
-  #ans   <- c(list(parms=parms), SS[-(1:3)])
   ans   <- c(parms, SS[-(1:3)])
-  class(ans)<-c("pms","MIparms")
+  class(ans) <- c("pms","MIparms")
   ans
 }

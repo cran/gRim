@@ -64,7 +64,7 @@ weakMarginalData <- function(MIhet, disc=NULL, cont=NULL, type="pms", details=2)
 ##               .toString(flevels), .toString(Ad.idx), A.dim))
   
   for (ii in 1:A.dim){
-    jia          <- margcell2entry(ia, Ad.idx, flevels)
+    jia          <- slice2entry(ia, Ad.idx, flevels)
 #    print(jia)
     ## counts n(ia)
     n.jia        <- n.vec[jia]

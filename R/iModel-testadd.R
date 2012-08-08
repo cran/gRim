@@ -38,18 +38,17 @@ testadd.iModel <- function(object, edge, k=2, details=1, ...){
 
   if (is.null((amat <- list(...)$amat)))
     amat <- glist2adjMAT(object$glist)
-##    amat <- ugList(object$glist, result="matrix")
 
-  
   ## Is edge is in model? stop if not
   if (!subsetof(edge, colnames(amat)))
     stop(cat("variables:", edge, "not in model\n"))
-  
+
   if (amat[edge[1],edge[2]]!=0)
     stop(cat("edge:", edge, "already in model\n"))
 
   ## Add edge to model
-  amat[edge[1],edge[2]] <- amat[edge[2],edge[1]] <- 1
+  ## FIXME: Fails if amat is sparse!
+  amat[edge[1],edge[2]] <- amat[edge[2],edge[1]] <- 1L
 
   ## Is model graphical?
   cliq <- maxCliqueMAT(amat)$maxCliques
@@ -62,7 +61,7 @@ testadd.iModel <- function(object, edge, k=2, details=1, ...){
   onlyinone <- FALSE
   if (isdecomp){
     idx   <- isin (cliq, edge, index=TRUE)
-    onlyinone <- sum(idx)==1
+    onlyinone <- sum(idx) == 1
   }
 
   if (isdecomp && onlyinone && model.type %in% c("cModel","dModel")){

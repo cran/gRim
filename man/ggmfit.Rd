@@ -37,7 +37,7 @@ ggmfitr(S, n.obs, glist, start=NULL, eps=1e-12, iter=1000, details=0, ...)
 }
 %\references{FIXME}
 \author{
-  Søren Højsgaard, sorenh@math.aau.dk
+  Søren Højsgaard, \email{sorenh@math.aau.dk}
 }
 % \note{ ~~further notes~~ 
 

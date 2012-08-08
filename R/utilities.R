@@ -2,9 +2,6 @@
   unlist(rhsf2list(f))
 }
 
-
-
-
 .list2pairs <- function(x){
   if (length(x)>0){
     if (!inherits(x,"list"))
@@ -57,34 +54,8 @@
   ans
 }
 
-
-
 ## Add e interaction to x
 ##
 .add.term <- function(glist,e){
   removeRedundant(c(glist,list(e)))
 }
-
-
-
-## Delete edge from generating class
-##
-## Maybe we don't need this; delete.term takes care of it (and is faster)
-## ## SHD, July 2008
-## .delete.edge <- function(glist, edge) {
-
-## #  cat("edge:\n");print(edge)
-## #  cat("glist:\n");print(glist); 
-##   idx     <- isin(glist,edge,index=TRUE)
-##   glist2  <- glist[idx==1]
-##   glist3  <- lapply(glist2,
-##                     function(g){
-##                       rest <- setdiff(g,edge)
-##                       lapply(edge, function(x)c(rest,x))
-##                                         #lapply(edge, function(x)setdiff(g,x))
-##                     })
-  
-##   glist3 <- unlist(glist3,recursive=FALSE)
-##   glistNew <- removeRedundant(c(glist3, glist[idx==0]))
-##   return(glistNew)
-## }

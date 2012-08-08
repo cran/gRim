@@ -54,7 +54,7 @@ ciTest_mvn(x, set = NULL, statistic = "DEV", ...)
 %% ~put references to the literature/web site here ~
 %}
 \author{
-  Søren Højsgaard, sorenh@math.aau.dk
+  Søren Højsgaard, \email{sorenh@math.aau.dk}
 }
 %\note{
 %%  ~~further notes~~
