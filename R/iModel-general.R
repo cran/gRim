@@ -38,6 +38,7 @@ print.iModelsummary <- function(x,...){
                                          collapse = "+")), .GlobalEnv),silent=TRUE)
   if (inherits(ans, "try-error"))
     stop("Unable to create formula from list. \nCould be due to white space, strange characters etc. in variable names\n")
+  ans
 }
 
 formula.iModel <- function(x,...){

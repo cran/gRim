@@ -4,7 +4,7 @@
 fit.mModel <- function(object, method="general", details=0, eps.parm=1e-6, maxit=100,...){
   method <- match.arg(method, c("general", "stephalving"))
 
-  ans <- .fitmModel(object, method=method, details=details, eps.parm=eps.parm, maxit=maxit, ...)
+  ans           <- .fitmModel(object, method=method, details=details, eps.parm=eps.parm, maxit=maxit, ...)
   ans$dimension <- .mmod_dimension(object$modelinfo$dlq, object$datainfo)
 
   cg <- object$datainfo$CGstats
@@ -22,7 +22,6 @@ fit.mModel <- function(object, method="general", details=0, eps.parm=1e-6, maxit
 
   ans$ideviance <- ans$logL - logL.ind
   ans$dev       <- logL.sat - ans$logL
-
   ans$aic       <-  -2*ans$logL + 2*ans$dimension['mod.dim']
   ans$bic       <-  -2*ans$logL + log(nrow(object$datainfo$data))*ans$dimension['mod.dim']
 
@@ -287,7 +286,7 @@ print.MIfit <- function(x,...){
 
   .infoPrint(details,1,"fit.mModel: Finding weak (empirical) marginals for each generator\n")
 
-  CGstats <- unclass(CGstats)
+  ##CGstats <- unclass(CGstats)
 
   ans <- vector("list", length(Ad.list))
   for (ii in 1:length(Ad.list)){
@@ -311,11 +310,11 @@ print.MIfit <- function(x,...){
   h.idx <- 2
   K.idx <- 3
 
-  Cparms <- unclass(Cparms)
-  EEghk  <- unclass(EEghk)
-  EEpms  <- unclass(EEpms)
-  AAghk  <- unclass(AAghk)
-  AApms  <- unclass(AApms)
+  ##Cparms <- unclass(Cparms)
+  ##EEghk  <- unclass(EEghk)
+  ##EEpms  <- unclass(EEpms)
+  ##AAghk  <- unclass(AAghk)
+  ##AApms  <- unclass(AApms)
 
   .infoPrint(details,5, cat(sprintf(".update.ghkParms: A=%8s\n",
                                     .toString(c("{",Ad.idx,"|", Ac.idx,"}")))))
@@ -359,7 +358,7 @@ print.MIfit <- function(x,...){
              res <- list(g=g.new, h=Cparms[['h']], K=Cparms[['K']])
              res <- .normalize.ghkParms(res)
              res <- c(res[1:3], Cparms[-(1:3)])
-             class(res)<- c("ghk", "MIparms")
+             ##class(res)<- c("ghk", "MIparms")
              ##cat("Cparms//Mparms AFTER update:\n");  print(res)
            },
            "continuous"={
@@ -375,7 +374,7 @@ print.MIfit <- function(x,...){
              res <- list(g=Cparms[['g']], h=h.new, K=K.new)
              res <- .normalize.ghkParms(res)
              res <- c(res, Cparms[-(1:3)])
-             class(res)<- c("ghk", "MIparms")
+             ##class(res)<- c("ghk", "MIparms")
            },
            "mixed"={
              ## g update:
@@ -412,7 +411,7 @@ print.MIfit <- function(x,...){
              res <- list(g=g.new, h=h.new, K=K.new)
              res <- .normalize.ghkParms(res)
              res <- c(res[1:3], Cparms[-(1:3)])
-             class(res)<- c("ghk", "MIparms")
+             ##class(res)<- c("ghk", "MIparms")
            })
   } else {
     .infoPrint(details, 5, cat(sprintf("Not updating generator\n")))
@@ -436,8 +435,8 @@ print.MIfit <- function(x,...){
 
 .mModel_logLpms <- function(CGstats, Mparms){
 
-  CGstats <- unclass(CGstats)
-  Mparms  <- unclass(Mparms)
+  ##CGstats <- unclass(CGstats)
+  ##Mparms  <- unclass(Mparms)
 
   Sigma.inv <- .cholsolve(Mparms[['Sigma']])
 
@@ -455,8 +454,8 @@ print.MIfit <- function(x,...){
 
 .mModel_parmdiff <- function(curr.Mparms, prev.Mparms){
 
-  curr.Mparms <- unclass(  curr.Mparms )
-  prev.Mparms <- unclass(  prev.Mparms )
+  ##curr.Mparms <- unclass(  curr.Mparms )
+  ##prev.Mparms <- unclass(  prev.Mparms )
 
   p.idx     <- 1
   mu.idx    <- 2
@@ -500,7 +499,7 @@ print.MIfit <- function(x,...){
 ##############################################################
 .CGstats2initpms <- function(CGstats, unif=TRUE){
 
-  CGstats <- unclass(CGstats)
+  ##CGstats <- unclass(CGstats)
 
   if (unif) { ## Uniform model
     PPP   <- CGstats$n.obs
@@ -543,6 +542,6 @@ print.MIfit <- function(x,...){
 
   rownames(CCC) <- colnames(CCC) <- rownames(MMM) <- CGstats$cont.names
   ans        <- c(list(p=PPP,mu=MMM,Sigma=CCC,gentype="mixed"),CGstats[-(1:3)])
-  class(ans) <- c("pms","MIparms")
+  ##class(ans) <- c("pms","MIparms")
   return(ans)
 }

@@ -72,17 +72,9 @@ CGstats_internal <- function(object, disc.names=NULL, cont.names=NULL, homogeneo
         }
     }
   res  <- c(ans, list(cont.names=cont.names, disc.names=disc.names, disc.levels=disc.levels))
-  class(res) <- "CGstats"
+  ##class(res) <- "CGstats"
   return(res)
- 
-}
-
-
-
-## CGstats.mModel <- function(object, disc.names=NULL, cont.names=NULL, homogeneous=TRUE, simplify=TRUE){
-##   CGstats(object$datainfo$data, object$datainfo$disc.names, object$datainfo$cont.names, homogeneous=homogeneous, simplify=simplify)
-## }
-
+ }
 
 print.CGstats <- function(x,...){
   print.default(x[1:3])
@@ -139,7 +131,7 @@ print.CGstats <- function(x,...){
   SS    <- SSD + quad
   
   ans <- c(CGstats, list(N=N, SSD=SSD, SS=SS))
-  class(ans) <- "CGstats"
+  ##class(ans) <- "CGstats"
   ans
 }
 
@@ -166,62 +158,4 @@ print.CGstats <- function(x,...){
   return(ans)
 }
 
-
-
-## CGstats.data.frame <- function(object, disc.names=NULL, cont.names=NULL, homogeneous=TRUE, simplify=TRUE){
-
-##   if (length(disc.names)==0 | length(cont.names)==0){
-##     vn <- unlist(lapply(object, is.numeric))
-##     if (length(disc.names)==0)
-##       disc.names <-  names(vn[!vn])
-##     if (length(cont.names)==0)
-##       cont.names <-  names(vn[ vn])
-##   }
-
-##   cat(sprintf("disc.names %s\n", toString(disc.names)))
-##   cat(sprintf("cont.names %s\n", toString(cont.names)))
-  
-
-  
-##   if (length(cont.names)==0)
-##     {
-##       xt    <- xtabs(~., data=object[,disc.names,drop=FALSE])
-##       ans   <- list(n.obs=xt)
-##       disc.levels <- dim(xt)
-##     }
-##   else
-##     {
-##       if (length(disc.names)==0)
-##         {
-##           ans <- cov.wt(object[,cont.names,drop=FALSE], method="ML")
-##           disc.levels <- NULL
-##         }
-##       else
-##         {
-##           ans <- .cov.wt.by(disc.names, cont.names, object)
-##           disc.levels <- dim(ans$n.obs)
-          
-##           if (homogeneous) {
-##             pp <- ans$n.obs / sum(ans$n.obs)
-##             CC <- ans$cov[[1]]
-##             CC[] <- 0
-##             for (ii in 1:length(ans$cov)){
-##               CC <- CC + ans$cov[[ii]]*pp[ii]
-##             } 
-##             ans$cov <- CC 
-##           }
-          
-##           if (simplify){
-##             ans$center <- t(do.call(rbind, ans$center))
-##             rownames(ans$center) <- cont.names
-##             if (!homogeneous){
-##               ans$cov <- t(do.call(rbind, lapply(ans$cov, as.numeric)))
-##             }
-##           }
-##         }
-##     }
-##   res <- c(ans, list(cont.names=cont.names, disc.names=disc.names, disc.levels=disc.levels))
-##   class(res) <- "CGstats"
-##   return(res)
-## }
 

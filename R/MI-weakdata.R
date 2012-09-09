@@ -5,7 +5,7 @@
 ### MIhet: Heterogeneous CGstats
 weakMarginalData <- function(MIhet, disc=NULL, cont=NULL, type="pms", details=2){
 
-  MIhet <- unclass(MIhet)
+  ##MIhet <- unclass(MIhet)
   .infoPrint(details,15,
              cat("Finding weak marginal (data)",
                  "     disc:",disc, "cont:", cont, "type:", .genType(disc,cont),"\n"))
@@ -25,7 +25,7 @@ weakMarginalData <- function(MIhet, disc=NULL, cont=NULL, type="pms", details=2)
 
   p   <- tableMargin(MIhet$n.obs, Ad.idx)  
   res <- list(p=p/sum(p), mu=NULL, Sigma=NULL, gentype="discrete", N=MIhet[['N']], Ad.idx=Ad.idx)
-  class(res) <- c("pms", "MIparms")
+  ##class(res) <- c("pms", "MIparms")
   res
 }
 
@@ -34,9 +34,8 @@ weakMarginalData <- function(MIhet, disc=NULL, cont=NULL, type="pms", details=2)
 .weak.datamarg.mix <- function(MIhet, Ad.idx, Ac.idx, details=2){
   .infoPrint(details, 5,"Finding weak marginal (data-mixed):  Ad.idx: ",
              Ad.idx, "  Ac.idx :", Ac.idx,"\n")
-
-  #n.obs <- MIhet[['n.obs']]
-
+  
+  ##n.obs <- MIhet[['n.obs']]
 ###n.vec <- as.numeric(MIhet[['n.obs']])
   n.vec <- c(MIhet[['n.obs']])
 
@@ -89,7 +88,7 @@ weakMarginalData <- function(MIhet, disc=NULL, cont=NULL, type="pms", details=2)
   rownames(mu.A.marg) <- rownames(Sigma.A.marg)
   ans            <-list(p=p.A, mu=mu.A.marg, Sigma=QQ, #Sigma=Sigma.A.marg,
                         gentype="mixed", N=MIhet[['N']], Ad.idx=Ad.idx, Ac.idx=Ac.idx)
-  class(ans) <- c("pms", "MIparms")
+  ##class(ans) <- c("pms", "MIparms")
   return(ans)
 }
 
@@ -117,7 +116,7 @@ weakMarginalData <- function(MIhet, disc=NULL, cont=NULL, type="pms", details=2)
   rownames(Sigma.A) <- colnames(Sigma.A) <- rownames(mu.A) <- rownames(mu.i) 
   
   ans <- list(p=1, mu=mu.A, Sigma=Sigma.A, gentype="continuous", N=MIhet[['N']],  Ac.idx = Ac.idx)
-  class(ans) <- c("pms", "MIparms")
+  ##class(ans) <- c("pms", "MIparms")
   ans             
 }
 

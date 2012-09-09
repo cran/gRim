@@ -47,9 +47,6 @@ print.MIparms <- function(x,simplify=TRUE,useN=FALSE, ...){
 
 .as.matrix <- .MIparms2matrix <- function(x,...){
 
-  ##   print("hhhhhhhhhhhhhhhhhhhhhhhhhh")
-  ##   print(names(x))
-  ##   print.default(x)
   if (x$gentype=="discrete"){
     matrix(as.numeric(x[[1]]),nrow=1)
   } else {
@@ -77,7 +74,8 @@ print.MIparms <- function(x,simplify=TRUE,useN=FALSE, ...){
 .cholsolve <- function(a){
 
   ##.Call("La_chol2inv",   .Call("La_chol", a, PACKAGE = "base"), ncol(a), PACKAGE = "base")
-  chol2inv(chol(a))
+  ##chol2inv(chol(a))
+  .Call("C_spdinv_arma", a , PACKAGE="gRim"   )
 }
 
 

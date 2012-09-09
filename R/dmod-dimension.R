@@ -38,7 +38,7 @@ loglinGenDim <- function(glist, tableinfo){
     {
       #print(lapply(glist, .subsets))
       zz    <- unlist(lapply(glist, .subsets), recursive=FALSE)
-      unzz  <- unique(zz)
+      unzz  <- unique.default(zz)
       #print(unzz)
       
     }

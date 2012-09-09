@@ -69,13 +69,14 @@ testInEdges <- function(object, edgeMAT=NULL, criterion="aic", k=2, alpha=NULL, 
   if (nrow(edgeMAT)==0)
     stop("There are no edges to test...\n")
   
-
   testFun(object, edgeMAT, comp.op=comp.op, crit.str=crit.str, alpha=alpha, k=k, amat=amat, vn=vn, ...)
 }
 
 
 .testInEdges_all <- function(object, edgeMAT, comp.op=`<`, crit.str="aic", alpha=0,k=2, amat, vn, ...)
 {
+
+  ##cat(".testInEdges_all\n")
   if (nrow(edgeMAT)==0)
     return(NULL)
 
@@ -83,11 +84,10 @@ testInEdges <- function(object, edgeMAT=NULL, criterion="aic", k=2, alpha=NULL, 
   colnames(testMAT) <- c("statistic","df","p.value","aic")
   indic <- rep.int(0,nrow(edgeMAT))
 
-
   for (ii in seq_len(nrow(edgeMAT))){
     ##print(edgeMAT[ii,])
     edgeTest <- testdelete(object, edgeMAT[ii,],k=k, amat=amat, ...)
-
+    
     testMAT[ii,] <- as.numeric(edgeTest[c("statistic","df","p.value","aic")])
     curr.stat <- edgeTest[[crit.str]]
 

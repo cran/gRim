@@ -16,10 +16,9 @@ cmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0){
   }
 
   varNames <- colnames(S)
-  ans      <- pFormula(formula, varNames, marginal, v.sep = ":",
-                       g.sep = "+", ignore.power.value=TRUE) 
+  ans      <- .pFormula2(formula, varNames, marginal)
+  ##, v.sep = ":",  g.sep = "+", ignore.power.value=TRUE) 
   glist <- ans$glist
-  
   ## Get varNames in the order matching to the data:
   varNames <- varNames[sort(match(ans$varNames, varNames))]
   
@@ -34,9 +33,7 @@ cmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0){
               )
 
   upd   <- .cModel_finalize(glist, varNames)  
-
-  res[names(upd)] <- upd
-  
+  res[names(upd)] <- upd  
   class(res) <- c("cModel","iModel")
   
   if (fit){

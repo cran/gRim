@@ -14,7 +14,7 @@ ggmfit <- function(S, n.obs, glist, start=NULL,
   #cat("ggmfit:\n"); print(S); print(n.obs); print(glist)
   
   glist.save <- glist.num <- glist
-  data.vn <- colnames(S)
+  data.vn    <- colnames(S)
 
   ## The used variables
   usevar <- uniquePrim(unlist(glist))       

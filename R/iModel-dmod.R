@@ -25,9 +25,8 @@ dmod <- function(formula, data, marginal=NULL, interactions=NULL, fit=TRUE, deta
     marginal <- varNames[zzz]
   }
 
-  ans <- pFormula(formula, varNames, marginal, interactions, v.sep = ":", g.sep = "+",
-                  ignore.power.value=FALSE)
-
+  ans <- .pFormula2(formula, varNames, marginal, interactions)
+  
   if (is_data.frame){
       data <- xtabs(~., data=data[ans$varNames])
   } else {    
@@ -35,9 +34,8 @@ dmod <- function(formula, data, marginal=NULL, interactions=NULL, fit=TRUE, deta
       data         <- as.table(tableMargin(data, ans$varNames))
     }
   }
-
   varNames     <- names(dimnames(data))
-
+   
   res <- list(glist     = ans$glist,
               varNames  = varNames,
               datainfo  = list(data=data),

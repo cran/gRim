@@ -22,7 +22,7 @@ iplot.iModel <- function(x,...){
          },
          "mModel"={
            V(ig)$color <- "white"
-           disc.idx <- match(x$datainfo$disc.names, V(ig)$name)-1
+           disc.idx <- match(x$datainfo$disc.names, V(ig)$name) #-1
            V(ig)[disc.idx]$color <- "grey"
          })
 

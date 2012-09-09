@@ -5,7 +5,7 @@
 #####################################################################
 
 pms2ghkParms <- function(parms){
-  parms <- unclass(parms)  
+  ##parms <- unclass(parms)  
   switch(parms[['gentype']],
          "discrete"={
            res    <- list(g=log(parms[["p"]]),h=NULL, K=NULL, gentype="discrete")
@@ -35,12 +35,12 @@ pms2ghkParms <- function(parms){
          })
   
   val <- c(res, parms[-(1:4)])
-  class(val)<- c("ghk","MIparms")
+  ##class(val)<- c("ghk","MIparms")
   return(val)
 }
 
 pms2phkParms <- function(parms){
-  parms <- unclass(parms)  
+  ##parms <- unclass(parms)  
   switch(parms[['gentype']],
          "discrete"={
            res    <- list(p=parms[["p"]],h=NULL, K=NULL, gentype="discrete")
@@ -57,12 +57,12 @@ pms2phkParms <- function(parms){
          })
   
   val <- c(res, parms[-(1:4)])
-  class(val)<- c("phk","MIparms")
+  ##class(val)<- c("phk","MIparms")
   return(val)
 }
 
 phk2ghkParms <- function(parms){
-  parms <- unclass(parms)    
+  ##parms <- unclass(parms)    
   switch(parms[['gentype']],
          "discrete"={
            res    <- list(g=log(parms[["p"]]),h=NULL, K=NULL, gentype="discrete")
@@ -90,13 +90,13 @@ phk2ghkParms <- function(parms){
          })
   
   val <- c(res, parms[-(1:4)])
-  class(val)<- c("ghk","MIparms")
+  ##class(val)<- c("ghk","MIparms")
   return(val)
 }
 
 ghk2pmsParms<-function(parms){
 
-  parms <- unclass(parms)
+  ##parms <- unclass(parms)
   switch(parms[['gentype']],
          "discrete"={
            zzz <- parms[['g']]
@@ -118,12 +118,12 @@ ghk2pmsParms<-function(parms){
          })
 
   val <- c(res, parms[-(1:4)])
-  class(val)<- c("pms","MIparms")
+  ##class(val)<- c("pms","MIparms")
   return(val)
 }
 
 phk2pmsParms<-function(parms){
-  parms <- unclass(parms)  
+  ##parms <- unclass(parms)  
   switch(parms[['gentype']],
          "discrete"={
            res <- list(p=parms[['g']], mu=NULL, Sigma=NULL, gentype="discrete")
@@ -140,12 +140,12 @@ phk2pmsParms<-function(parms){
          })
 
   val <- c(res, parms[-(1:4)])
-  class(val)<- c("pms","MIparms")
+  ##class(val)<- c("pms","MIparms")
   return(val)
 }
 
 ghk2phkParms<-function(parms){
-  parms <- unclass(parms)  
+  ##parms <- unclass(parms)  
   switch(parms[['gentype']],
          "discrete"={
            zzz <- parms[['g']]
@@ -167,7 +167,7 @@ ghk2phkParms<-function(parms){
          })
 
   val <- c(res, parms[-(1:4)])
-  class(val)<- c("phk","MIparms")
+  ##class(val)<- c("phk","MIparms")
   return(val)
 }
 
@@ -209,6 +209,6 @@ CGstats2mmodParms <- function(parms, type="ghk"){
 moment2pmsParms <- function(SS){
   parms <- list(p=SS$n.obs/sum(SS$n.obs), mu=SS$center, Sigma=SS$cov, n.total=sum(SS$n.obs), gentype="mixed")
   ans   <- c(parms, SS[-(1:3)])
-  class(ans) <- c("pms","MIparms")
+  ##class(ans) <- c("pms","MIparms")
   ans
 }

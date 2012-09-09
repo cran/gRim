@@ -13,19 +13,18 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
     if (!missing(marginal)) 
       marginal <- intersectPrim(data.names, marginal)
     
-    flist <- .pFormula2(formula, data.names, marginal, 
-                    v.sep = ":", g.sep = "+", ignore.power.value = FALSE)
+    flist <- .pFormula2(formula, data.names, marginal) 
+    ##v.sep = ":", g.sep = "+", ignore.power.value = FALSE)
     glist <- flist$glist
-
+    
 ### Extract the relevant columns of the dataframe. Discrete variables
 ### appear to the left of continuous variables
 ###
-    datainfo <- .MIdatainfo(flist$varnames, data)
+    datainfo <- .MIdatainfo(flist$varNames, data)
     .infoPrint(details, "mmod: .disc.names :", datainfo$disc.names, "\n")
     .infoPrint(details, "mmod: .cont.names :", datainfo$cont.names, "\n")
 
     varNames  <- datainfo$data.names    
-
     res <- list(glist          = glist,
                 varNames       = varNames,
                 datainfo       = datainfo,
@@ -141,11 +140,11 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
               linear    = removeRedundant(lin.gen.names),  
               quadratic = removeRedundant(quad.gen.names))  
   
-  ans <- list(glist.num=glist.num,
-              glist.disc=glist.disc,
-              glist.cont=glist.cont,
-              glist.num.disc=glist.num.disc,
-              glist.num.cont=glist.num.cont,              
+  ans <- list(glist.num      = glist.num,
+              glist.disc     = glist.disc,
+              glist.cont     = glist.cont,
+              glist.num.disc = glist.num.disc,
+              glist.num.cont = glist.num.cont,              
               dlq=dlq)
 
   return(ans)
@@ -157,21 +156,19 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
 ### Stops if a vn does not appear in data.
 .MIdatainfo <- function(vn, dd)
   {
-
+    ##cat(".MIdatainfo\n")
     data.names <- names(dd)
     
     zzz <- match(vn, data.names)
     if (any(is.na(zzz)))
       stop("variables: ", vn[is.na(zzz)], " are not in data\n")
-    
-    
+        
     disc.indic <- 1*!c(lapply(dd, is.numeric),recursive=TRUE)
     used.indic <- rep.int(0, length(data.names))
     used.indic[zzz] <- 1
     
     used.disc <- used.indic * (disc.indic==1)
     used.cont <- used.indic * (disc.indic==0)
-
     
     if (sum(used.disc)==0)
       stop("No discrete variables...\n")
@@ -192,7 +189,10 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
     cont.names <- data.names[disc.indic2==0]
 
     ##CGstats <- .extendCGstats(CGstats(newdata, disc.names=disc.names, cont.names=cont.names,homogeneous=FALSE))
-    CGstats <- .extendCGstats(CGstats_internal(newdata, disc.names=disc.names, cont.names=cont.names,homogeneous=FALSE))
+    CGstats <-
+      .extendCGstats(CGstats_internal(newdata,
+                                      disc.names=disc.names,
+                                      cont.names=cont.names,homogeneous=FALSE))
     list(data=newdata,
          CGstats=CGstats,
          data.names=data.names,

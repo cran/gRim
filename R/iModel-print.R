@@ -6,20 +6,6 @@ print.iModel <- function(x, ...){
   ## Model properties
   cat(sprintf(" graphical : %5s  decomposable : %5s\n", x$isGraphical, x$isDecomposable))
 
-##   if (x$isFitted){
-##     dimension <- x$fitinfo$dimension
-##     #cat("Fit info: \n")
-##     cat(sprintf(" -2logL    : %14.4f mdim  : %4d \n",
-##                 -2*x$fitinfo$logL,       dimension["mod.dim"]))
-##     cat(sprintf(" ideviance : %14.4f idf   : %4d \n",
-##                 x$fitinfo$ideviance,  dimension["idf"]))
-##     cat(sprintf(" deviance  : %14.4f df    : %4d \n",
-##                 x$fitinfo$lrt,        dimension["df"]))
-##     cat(sprintf(" aic       : %14.4f \n bic       : %14.4f \n",
-##                 x$fitinfo$aic,        x$fitinfo$bic))
-##   }
-
-
   if (x$isFitted){
     dimension <- x$fitinfo$dimension
     #cat("Fit info: \n")
@@ -30,25 +16,7 @@ print.iModel <- function(x, ...){
     cat(sprintf(" deviance  : %14.2f df   : %4d \n",
                 x$fitinfo$dev,        dimension["df"]))
   }
-  
-
-  
-  
-##   if (x$isFitted){
-##     dimension <- x$fitinfo$dimension
-##     #cat("Fit info: \n")
-##     cat(sprintf(" -2logL    : %14.4f ideviance : %14.4f deviance  : %14.4f\n",
-##                 -2*x$fitinfo$logL, x$fitinfo$ideviance, x$fitinfo$lrt))
-##     cat(sprintf(" mdim      : %4d   idf : %4d  df : %4d\n",
-##                 dimension["mod.dim"], dimension["idf"], dimension["df"] ))
     
-## ##     cat(sprintf("  df    : %4d \n",     x$fitinfo$lrt,        dimension["df"]))
-## ##     cat(sprintf(" aic       : %14.4f \n bic       : %14.4f \n",  x$fitinfo$aic,        x$fitinfo$bic))
-##   }
-  
-
-
-  
   return(invisible(x))
 }
 
@@ -81,25 +49,66 @@ print.dModel <- function(x, ...){
 
 
 
-..print.mModel <- function(x,...)
-  {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## ..print.mModel <- function(x,...)
+##   {
     
-    cat("Mixed interaction model: \n")
+##     cat("Mixed interaction model: \n")
     
-    cat("Model:\n")
-    utils::str(x$glist, give.head=FALSE,no.list=TRUE,comp.str=" ")
+##     cat("Model:\n")
+##     utils::str(x$glist, give.head=FALSE,no.list=TRUE,comp.str=" ")
     
-    if (x$isFitted){      
-      cat(sprintf("Dimension: %3i df: %3i logL %f -2logL=%f\n",
-                  x$dimension[1], x$dimension[4],x$fitinfo$logL, -2*x$fitinfo$logL))
-    } else {
-      cat(sprintf("Dimension: %3i df: %3i\n", x$dimension[1], x$dimension[4]))
-    }
+##     if (x$isFitted){      
+##       cat(sprintf("Dimension: %3i df: %3i logL %f -2logL=%f\n",
+##                   x$dimension[1], x$dimension[4],x$fitinfo$logL, -2*x$fitinfo$logL))
+##     } else {
+##       cat(sprintf("Dimension: %3i df: %3i\n", x$dimension[1], x$dimension[4]))
+##     }
     
-    ##cat("Object has slots:\n")
-    ##print(names(x))
-    return(invisible(x))
-  }
+##     ##cat("Object has slots:\n")
+##     ##print(names(x))
+##     return(invisible(x))
+##   }
 
 
 ## print.dModel <- function(x, ...){
@@ -145,3 +154,32 @@ print.dModel <- function(x, ...){
 
 ##   return(invisible(x))
 ## }
+
+
+
+
+  ##   if (x$isFitted){
+##     dimension <- x$fitinfo$dimension
+##     #cat("Fit info: \n")
+##     cat(sprintf(" -2logL    : %14.4f mdim  : %4d \n",
+##                 -2*x$fitinfo$logL,       dimension["mod.dim"]))
+##     cat(sprintf(" ideviance : %14.4f idf   : %4d \n",
+##                 x$fitinfo$ideviance,  dimension["idf"]))
+##     cat(sprintf(" deviance  : %14.4f df    : %4d \n",
+##                 x$fitinfo$lrt,        dimension["df"]))
+##     cat(sprintf(" aic       : %14.4f \n bic       : %14.4f \n",
+##                 x$fitinfo$aic,        x$fitinfo$bic))
+##   }
+
+  
+##   if (x$isFitted){
+##     dimension <- x$fitinfo$dimension
+##     #cat("Fit info: \n")
+##     cat(sprintf(" -2logL    : %14.4f ideviance : %14.4f deviance  : %14.4f\n",
+##                 -2*x$fitinfo$logL, x$fitinfo$ideviance, x$fitinfo$lrt))
+##     cat(sprintf(" mdim      : %4d   idf : %4d  df : %4d\n",
+##                 dimension["mod.dim"], dimension["idf"], dimension["df"] ))
+    
+## ##     cat(sprintf("  df    : %4d \n",     x$fitinfo$lrt,        dimension["df"]))
+## ##     cat(sprintf(" aic       : %14.4f \n bic       : %14.4f \n",  x$fitinfo$aic,        x$fitinfo$bic))
+##   }

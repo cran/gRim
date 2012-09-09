@@ -5,7 +5,7 @@
 ### Mparms: pmS parms
 weakMarginalModel<- function(Mparms, disc=NULL,cont=NULL, type="pms", details=2){
 
-  Mparms <- unclass(Mparms)
+  ##Mparms <- unclass(Mparms)
   .infoPrint(details,15,
              cat("Finding weak marginal (model)",
                  "     disc:", disc, "cont:", cont, "\n"))
@@ -28,7 +28,7 @@ weakMarginalModel<- function(Mparms, disc=NULL,cont=NULL, type="pms", details=2)
 
   p.A <- tableMargin(Mparms$p, Ad.idx)
   res <- list(p=p.A, mu=NULL, Sigma=NULL,gentype="discrete", Ad.idx=Ad.idx)
-  class(res) <- c("pms", "MIparms")
+  ##class(res) <- c("pms", "MIparms")
   res
 }
 
@@ -91,7 +91,7 @@ weakMarginalModel<- function(Mparms, disc=NULL,cont=NULL, type="pms", details=2)
   ans          <-list(p=p.A, mu=mu.A.marg, Sigma=Sigma.A.marg, gentype="mixed",
                       N=Mparms$N, 
                       jia.mat=jia.mat, Ad.idx=Ad.idx, Ac.idx=Ac.idx)    
-  class(ans) <- c("pms", "MIparms")
+  ##class(ans) <- c("pms", "MIparms")
   #print(ans, useN=TRUE)
   #.infoPrint(details, 1,"+++++++++++++++++ DONE +++++++++++++++ \n")
   ans
@@ -118,6 +118,6 @@ weakMarginalModel<- function(Mparms, disc=NULL,cont=NULL, type="pms", details=2)
   rownames(mu.A) <- rownames(mu.i)
 
   ans        <- list(p=1, mu=mu.A, Sigma=Sigma.A, gentype="continuous", Ac.idx = Ac.idx)
-  class(ans) <- c("pms","MIparms")
+  ##class(ans) <- c("pms","MIparms")
   ans
 }
