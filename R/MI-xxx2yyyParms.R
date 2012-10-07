@@ -5,6 +5,30 @@
 #####################################################################
 
 pms2ghkParms <- function(parms){
+##   cat("----------------\npms2ghkParms\n")
+##   str(parms)
+
+  res <- .Call("C_pms2ghk", parms)
+  val <- c(res, parms[-(1:4)])
+  val
+
+##   .pms2ghkParms(parms)
+
+}
+
+ghk2pmsParms <- function(parms){
+##   cat("----------------\nghk2pmsParms\n")
+##   str(parms)
+
+  res <- .Call("C_ghk2pms", parms)
+  val <- c(res, parms[-(1:4)])
+  val
+
+##   .ghk2pmsParms(parms)
+
+}
+
+.pms2ghkParms <- function(parms){
   ##parms <- unclass(parms)  
   switch(parms[['gentype']],
          "discrete"={
@@ -38,6 +62,41 @@ pms2ghkParms <- function(parms){
   ##class(val)<- c("ghk","MIparms")
   return(val)
 }
+
+.ghk2pmsParms<-function(parms){
+
+  ##parms <- unclass(parms)
+  switch(parms[['gentype']],
+         "discrete"={
+           zzz <- parms[['g']]
+           pp  <- exp(zzz-mean.default(zzz))
+           res <- list(p=pp/sum(pp), mu=NULL, Sigma=NULL, gentype="discrete")
+         },
+         "mixed"={
+           Sigma     <- .cholsolve(parms[['K']])
+           hh        <- parms[['h']]
+           mu        <- Sigma %*% hh        # Kinv %*% h
+           g.quad    <- parms[['g']] + colSumsPrim(hh * mu)/2
+           pp        <- exp( g.quad - mean.default(g.quad) )           
+           res       <- list(p=pp/sum(pp), mu=mu, Sigma=Sigma, gentype="mixed")  
+         },
+         "continuous"={
+           Sigma     <- .cholsolve(parms[['K']])
+           mu        <- Sigma %*% parms[['h']]
+           res       <- list(p=1, mu=mu, Sigma=Sigma, gentype="continuous")
+         })
+
+  val <- c(res, parms[-(1:4)])
+  ##class(val)<- c("pms","MIparms")
+  return(val)
+}
+
+
+
+
+
+
+
 
 pms2phkParms <- function(parms){
   ##parms <- unclass(parms)  
@@ -94,33 +153,6 @@ phk2ghkParms <- function(parms){
   return(val)
 }
 
-ghk2pmsParms<-function(parms){
-
-  ##parms <- unclass(parms)
-  switch(parms[['gentype']],
-         "discrete"={
-           zzz <- parms[['g']]
-           pp  <- exp(zzz-mean.default(zzz))
-           res <- list(p=pp/sum(pp), mu=NULL, Sigma=NULL, gentype="discrete")
-         },
-         "mixed"={
-           Sigma     <- .cholsolve(parms[['K']])
-           hh        <- parms[['h']]
-           mu        <- Sigma %*% hh        # Kinv %*% h
-           g.quad    <- parms[['g']] + colSumsPrim(hh * mu)/2
-           pp        <- exp( g.quad - mean.default(g.quad) )           
-           res       <- list(p=pp/sum(pp), mu=mu, Sigma=Sigma, gentype="mixed")  
-         },
-         "continuous"={
-           Sigma     <- .cholsolve(parms[['K']])
-           mu        <- Sigma %*% parms[['h']]
-           res       <- list(p=1, mu=mu, Sigma=Sigma, gentype="continuous")
-         })
-
-  val <- c(res, parms[-(1:4)])
-  ##class(val)<- c("pms","MIparms")
-  return(val)
-}
 
 phk2pmsParms<-function(parms){
   ##parms <- unclass(parms)  
@@ -177,18 +209,16 @@ ghk2phkParms<-function(parms){
 .normalize.ghkParms <- function(parms){
 
   K.idx <- 3
-  h         <- parms[['h']]
-  #mu        <- solve.default(parms[['K']], h)
-  mu        <- .cholsolve(parms[[K.idx]]) %*% h
+  hh        <- parms[['h']]
+  mu        <- .cholsolve(parms[[K.idx]]) %*% hh
   logdetK   <- .logdet(parms[[K.idx]])
-
   Q         <- nrow(parms[[K.idx]])
 
-  quad   <- colSumsPrim(h * mu)
+  quad   <- colSumsPrim(hh * mu)
   zzz    <- parms[['g']] + quad / 2
   ppp    <- exp( zzz - mean.default(zzz))
-  normconst     <- sum(ppp)
-  pppn    <- ppp / normconst
+  normconst <- sum(ppp)
+  pppn      <- ppp / normconst
 
   g.new <- log(pppn) + (logdetK - Q*log(2*pi) - quad)/2
 

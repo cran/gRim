@@ -1,6 +1,7 @@
 pkgname <- "gRim"
 source(file.path(R.home("share"), "R", "examples-header.R"))
 options(warn = 1)
+options(pager = "console")
 library('gRim')
 
 assign(".oldSearch", search(), pos = 'CheckExEnv')

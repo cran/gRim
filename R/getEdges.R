@@ -61,11 +61,11 @@ getOutEdges <- function(object, type="unrestricted", discrete=NULL, ...){
 
 getInEdgesMAT <- function(adjmat, type="unrestricted", discrete=NULL, ...){
   type <- match.arg(type, c("unrestricted", "decomposable"))
-  emat <- edgeListMAT(adjmat, matrix=TRUE)
+  emat <- edgeListMAT(adjmat, matrix=TRUE) #;  print(emat)
   if (type=="decomposable"){
       idx  <- vector("logical", nrow(emat))    
       for (ii in seq_len(nrow(emat))){
-        ed <- emat[ii,]
+        ed <- emat[ii,] #;        print(ed)
         adjmat[ed[1],ed[2]] <- adjmat[ed[2],ed[1]] <- 0
         idx[ii] <- length(mcsmarkedMAT(adjmat,discrete=discrete))>0
         adjmat[ed[1],ed[2]] <- adjmat[ed[2],ed[1]] <- 1

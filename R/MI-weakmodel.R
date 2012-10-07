@@ -3,8 +3,11 @@
 ###
 
 ### Mparms: pmS parms
-weakMarginalModel<- function(Mparms, disc=NULL,cont=NULL, type="pms", details=2){
 
+## FIXME: weakMarginalModel:
+## FIXME:   We carry N to all marginal model parameters, not a big deal but it would be cleaner if we didn't
+
+weakMarginalModel<- function(Mparms, disc=NULL,cont=NULL, type="pms", details=2){
   ##Mparms <- unclass(Mparms)
   .infoPrint(details,15,
              cat("Finding weak marginal (model)",
@@ -24,11 +27,12 @@ weakMarginalModel<- function(Mparms, disc=NULL,cont=NULL, type="pms", details=2)
 ### (Discrete)-generator
 ###
 .weak.modelmarg.disc <- function(Mparms, Ad.idx, details=2){
-  .infoPrint(details,8, "Finding weak marginal (model-discrete):  Ad.idx: ", Ad.idx, "\n")
+
+  .infoPrint(details,2, "Finding weak marginal (model-discrete):  Ad.idx: ", Ad.idx, "\n")
 
   p.A <- tableMargin(Mparms$p, Ad.idx)
-  res <- list(p=p.A, mu=NULL, Sigma=NULL,gentype="discrete", Ad.idx=Ad.idx)
-  ##class(res) <- c("pms", "MIparms")
+  res <- list(p=p.A, mu=NULL, Sigma=NULL, gentype="discrete",  
+              Ad.idx=Ad.idx, N=Mparms$N)
   res
 }
 
@@ -89,8 +93,8 @@ weakMarginalModel<- function(Mparms, disc=NULL,cont=NULL, type="pms", details=2)
   Sigma.A.marg <- Sigma.tmp + QQ
   
   ans          <-list(p=p.A, mu=mu.A.marg, Sigma=Sigma.A.marg, gentype="mixed",
-                      N=Mparms$N, 
-                      jia.mat=jia.mat, Ad.idx=Ad.idx, Ac.idx=Ac.idx)    
+                      Ad.idx=Ad.idx, Ac.idx=Ac.idx, N=Mparms$N, 
+                      jia.mat=jia.mat )    
   ##class(ans) <- c("pms", "MIparms")
   #print(ans, useN=TRUE)
   #.infoPrint(details, 1,"+++++++++++++++++ DONE +++++++++++++++ \n")
@@ -106,18 +110,14 @@ weakMarginalModel<- function(Mparms, disc=NULL,cont=NULL, type="pms", details=2)
   p.i       <- as.numeric(Mparms[['p']])
   mu.i      <- Mparms[['mu']][Ac.idx,,drop=FALSE]
   Sigma.tmp <- Mparms[['Sigma']][Ac.idx,Ac.idx,drop=FALSE]
-
   mu.A      <- rowSumsPrim(.colmult(p.i, mu.i))
-
   mu.dif    <- mu.i - mu.A
   quad      <- .vMMt(p.i, mu.dif)
-
   Sigma.A   <- Sigma.tmp + quad
-
   dim(mu.A) <- c(dim(mu.i)[1],1)
   rownames(mu.A) <- rownames(mu.i)
 
-  ans        <- list(p=1, mu=mu.A, Sigma=Sigma.A, gentype="continuous", Ac.idx = Ac.idx)
-  ##class(ans) <- c("pms","MIparms")
+  ans        <- list(p=1, mu=mu.A, Sigma=Sigma.A, gentype="continuous",
+                     Ac.idx = Ac.idx, N=Mparms$N)
   ans
 }

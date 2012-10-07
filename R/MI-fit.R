@@ -8,12 +8,14 @@ fit.mModel <- function(object, method="general", details=0, eps.parm=1e-6, maxit
   ans$dimension <- .mmod_dimension(object$modelinfo$dlq, object$datainfo)
 
   cg <- object$datainfo$CGstats
+
   ## Saturated model
   n.obs <- cg$n.obs
   NN    <- cg$N
   qq    <- length(cg$cont.names)
   SS    <- cg$SSD/NN
   logL.sat <- sum(n.obs*log(n.obs/NN)) - NN*qq/2 * log(2*pi) - NN/2 * log(det(SS)) - NN*qq/2
+
   ## Independence model
   i.model <- loglin(n.obs, as.list(seq_along(dim(n.obs))),iter=1, print=FALSE, fit=TRUE)
   grand.mean <- rowSumsPrim(colwiseProd(n.obs/NN, cg$center))
@@ -58,6 +60,9 @@ print.MIfit <- function(x,...){
   Cparms <- pms2ghkParms(Mparms)
   ##cat("INITIAL PARAMETERS:\n"); print(Mparms)
 
+##   Mp <<- Mparms
+##   Cp <<- Cparms
+  
 ### Generator lists
 ###
   Ad.list <- object$modelinfo$glist.num.disc
@@ -69,6 +74,9 @@ print.MIfit <- function(x,...){
                                      Ad.list, Ac.list, type="ghk", details=details)
   WMDpms <- lapply(WMDghk, ghk2pmsParms)
 
+##   Wd <<- WMDghk
+##   Wp <<- WMDpms
+  
 ### Iterate to maximize logL
 ###
   .infoPrint(details,1, "fit.mModel: Calling .mModel_iterate\n")
@@ -180,7 +188,9 @@ print.MIfit <- function(x,...){
     EEghk     <- WMDghk[[ii]]
     EEpms     <- WMDpms[[ii]]
     AApms     <- weakMarginalModel(Mparms, disc=Ad.idx, cont=Ac.idx, type="pms", details=details)
+##    AAp <<- AApms
     AAghk     <- pms2ghkParms(AApms)
+##    AAg <<- AAghk
     zzz       <- .innerloop(Mparms, Cparms, Ad.idx, Ac.idx,
                             EEghk, EEpms, AAghk, AApms, CGstats, scale, prev.logL, details)
     Mparms    <- zzz$Mparms
@@ -310,16 +320,9 @@ print.MIfit <- function(x,...){
   h.idx <- 2
   K.idx <- 3
 
-  ##Cparms <- unclass(Cparms)
-  ##EEghk  <- unclass(EEghk)
-  ##EEpms  <- unclass(EEpms)
-  ##AAghk  <- unclass(AAghk)
-  ##AApms  <- unclass(AApms)
-
   .infoPrint(details,5, cat(sprintf(".update.ghkParms: A=%8s\n",
                                     .toString(c("{",Ad.idx,"|", Ac.idx,"}")))))
   gt <- .genType(Ad.idx, Ac.idx)
-
   d.parms.crit <- 0.00001
 
   if (details>=5){
@@ -331,15 +334,8 @@ print.MIfit <- function(x,...){
   marg.d.parms <- .mModel_parmdiff(AApms, EEpms)
   .infoPrint(details,5, cat(sprintf("PARMDIF=%f\n", marg.d.parms)))
 
-##   print(marg.d.parms)
-##   print(d.parms.crit)
-
   if (marg.d.parms>d.parms.crit){
-
-
-    ##FIXME: Hack to avoid calling mModel_parmdiff
-##  if (TRUE){
-
+    
     if (details>=5){
       cat("PRE UPDATE Mparms:\n");
       print(.MIparms2matrix(ghk2pmsParms(Cparms)))
@@ -358,7 +354,6 @@ print.MIfit <- function(x,...){
              res <- list(g=g.new, h=Cparms[['h']], K=Cparms[['K']])
              res <- .normalize.ghkParms(res)
              res <- c(res[1:3], Cparms[-(1:3)])
-             ##class(res)<- c("ghk", "MIparms")
              ##cat("Cparms//Mparms AFTER update:\n");  print(res)
            },
            "continuous"={
@@ -374,35 +369,24 @@ print.MIfit <- function(x,...){
              res <- list(g=Cparms[['g']], h=h.new, K=K.new)
              res <- .normalize.ghkParms(res)
              res <- c(res, Cparms[-(1:3)])
-             ##class(res)<- c("ghk", "MIparms")
            },
            "mixed"={
              ## g update:
-###              upd.g    <- scale * (EEghk[['g']] - AAghk[['g']])
-###              g.new    <- tableOp2(Cparms[['g']], upd.g, `+`, restore=TRUE)
              upd.g    <- scale * (EEghk[[g.idx]] - AAghk[[g.idx]])
              g.new    <- tableOp2(Cparms[[g.idx]], upd.g, `+`, restore=TRUE)
 
              ##cat("upd.g:\n"); print(t(round(cbind(EEghk[["g"]], AAghk[["g"]], upd.g),4)))
              ## K update:
-
-###              upd.k   <- scale * (EEghk[["K"]] - AAghk[["K"]])
-###              K.new   <- Cparms[['K']]
-
              upd.k   <- scale * (EEghk[[K.idx]] - AAghk[[K.idx]])
              K.new   <- Cparms[[K.idx]]
 
 
              K.new[Ac.idx,Ac.idx] <- K.new[Ac.idx,Ac.idx] + upd.k
              ##cat("upd.k:\n"); print(round(cbind(EEghk[["K"]], AAghk[["K"]], upd.k),4))
-             ## h update:
-###              h.new   <- Cparms[['h']]
-###              upd.h   <- scale * (EEghk[['h']]-AAghk[['h']])
-
              h.new   <- Cparms[[h.idx]]
              upd.h   <- scale * (EEghk[[h.idx]]-AAghk[[h.idx]])
 
-             em      <- AAghk[['jia.mat']]
+             em       <- AAghk[['jia.mat']]
              Cparms.h <- Cparms[['h']]
              for (jj in 1:ncol(em))
                h.new[Ac.idx,em[,jj]] <- Cparms.h[Ac.idx,em[,jj],drop=FALSE] + upd.h[,jj]
@@ -411,7 +395,6 @@ print.MIfit <- function(x,...){
              res <- list(g=g.new, h=h.new, K=K.new)
              res <- .normalize.ghkParms(res)
              res <- c(res[1:3], Cparms[-(1:3)])
-             ##class(res)<- c("ghk", "MIparms")
            })
   } else {
     .infoPrint(details, 5, cat(sprintf("Not updating generator\n")))
@@ -435,9 +418,6 @@ print.MIfit <- function(x,...){
 
 .mModel_logLpms <- function(CGstats, Mparms){
 
-  ##CGstats <- unclass(CGstats)
-  ##Mparms  <- unclass(Mparms)
-
   Sigma.inv <- .cholsolve(Mparms[['Sigma']])
 
   n.i    <- as.numeric(CGstats[['n.obs']])
@@ -454,35 +434,28 @@ print.MIfit <- function(x,...){
 
 .mModel_parmdiff <- function(curr.Mparms, prev.Mparms){
 
-  ##curr.Mparms <- unclass(  curr.Mparms )
-  ##prev.Mparms <- unclass(  prev.Mparms )
-
-  p.idx     <- 1
-  mu.idx    <- 2
-  Sigma.idx <- 3
-  N.idx     <- 5
+##   cat("curr.Mparms:---------------\n "); print(curr.Mparms)
+##   cat("prev.Mparms:---------------\n "); print(prev.Mparms)
   
   if (curr.Mparms[['gentype']]=="discrete"){
-
-    N   <- prev.Mparms[[N.idx]]
-    cp  <- curr.Mparms[[p.idx]]
-    ppp <- as.numeric(N * abs((cp - prev.Mparms[[p.idx]])) /sqrt((N * cp + 1)))
+    N   <- prev.Mparms[['N']]
+    cp  <- curr.Mparms[['p']]
+    ppp <- as.numeric(N * abs((cp - prev.Mparms[['p']])) /sqrt((N * cp + 1)))
     ans <- max(ppp)
-
   } else {
     N   <- prev.Mparms[['N']]
-    cp  <- curr.Mparms[[p.idx]]
-    sss <- curr.Mparms[[Sigma.idx]]
+    cp  <- curr.Mparms[['p']]
+    sss <- curr.Mparms[['Sigma']]
     nr  <- nrow(sss)
     iii <- 1+(nr+1)*((1:nr)-1)
     ddd <- sss[iii] ## faster than diag(sss)
     ##     ppp <- as.numeric(N * abs((cp - prev.Mparms[[p.idx]])) / sqrt((N * cp + 1)))
     ##     mmm <- as.numeric(abs(curr.Mparms[[mu.idx]] - prev.Mparms[[mu.idx]])/sqrt(ddd))
 
-    ppp <- c(N * abs((cp - prev.Mparms[[p.idx]])) / sqrt((N * cp + 1)))
-    mmm <- c(abs(curr.Mparms[[mu.idx]] - prev.Mparms[[mu.idx]])/sqrt(ddd))
+    ppp <- c(N * abs((cp - prev.Mparms[['p']])) / sqrt((N * cp + 1)))
+    mmm <- c(abs(curr.Mparms[['mu']] - prev.Mparms[['mu']])/sqrt(ddd))
 
-    xxx <- abs(sss - prev.Mparms[[Sigma.idx]])
+    xxx <- abs(sss - prev.Mparms[['Sigma']])
     uuu <- xxx/sqrt(tcrossprod(ddd) + sss^2)
 
     ans <- max(c(ppp,mmm,c(uuu)))

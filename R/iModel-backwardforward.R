@@ -107,7 +107,8 @@ backward <- function(object, criterion="aic", alpha=NULL, type="decomposable", s
 
   amat    <- glist2adjMAT(object$glist)
   edgeMAT <- getEdges(amat, type=type, ingraph=TRUE, discrete=discrete)
-  edgeMAT <- .subtract.fix(fixinMAT,  edgeMAT, vn)
+  fixNUM  <- pairs2num(fixinMAT,  vn)
+  edgeMAT <- .subtract.fix(fixNUM,  edgeMAT, vn)
 
   if (nrow(edgeMAT)==0){
     if (details>=1)
@@ -131,15 +132,17 @@ backward <- function(object, criterion="aic", alpha=NULL, type="decomposable", s
 
       ## Update model object and prepare to start all over again:
       object  <- update(object, list(drop.edge=opt.edge))
+
       amat    <- glist2adjMAT(object$glist)
       edgeMAT <- getEdges(amat, type=type, ingraph=TRUE, discrete=discrete)
-      edgeMAT <- .subtract.fix(fixinMAT, edgeMAT, vn)
+      edgeMAT <- .subtract.fix(fixNUM, edgeMAT, vn)
       if (nrow(edgeMAT)==0 | itcount==steps) { break }
     } else {
       break
     }
     itcount <- itcount + 1
   }
+##  cat(sprintf("itcount %i\n", itcount))
   return(object)
 }
 
@@ -202,7 +205,8 @@ forward <- function(object, criterion="aic", alpha=NULL, type="decomposable", se
 
   amat    <- glist2adjMAT(object$glist)
   edgeMAT <- getEdges(amat, type=type, ingraph=FALSE, discrete=discrete)
-  edgeMAT <- .subtract.fix(fixoutMAT,  edgeMAT, vn)
+  fixNUM  <- pairs2num(fixoutMAT,  vn)
+  edgeMAT <- .subtract.fix(fixNUM,  edgeMAT, vn)
 
   if (nrow(edgeMAT)==0){
     if (details>=1)
@@ -228,7 +232,7 @@ forward <- function(object, criterion="aic", alpha=NULL, type="decomposable", se
       object  <- update(object, list(add.edge=opt.edge))
       amat    <- glist2adjMAT(object$glist)
       edgeMAT <- getEdges(amat, type=type, ingraph=FALSE, discrete=discrete)
-      edgeMAT <- .subtract.fix(fixoutMAT, edgeMAT, vn)
+      edgeMAT <- .subtract.fix(fixNUM, edgeMAT, vn)
       if (nrow(edgeMAT)==0 | itcount==steps) { break }
     } else {
       break
@@ -241,23 +245,19 @@ forward <- function(object, criterion="aic", alpha=NULL, type="decomposable", se
 
 
 ## Used for modifying an edgeMAT by subtracting those edges in fixMAT from edgeMAT
-.subtract.fix <- function(fixMAT, edgeMAT, vn){
-    ## FIXME: No need to calculate fixNUM for every edge...
-    ## cat("fixMAT:\n"); print(fixMAT)
-    ## cat("edgeMAT:\n");print(edgeMAT)
-    ## cat("vn:\n"); print(vn)
+.subtract.fix <- function(fixNUM, edgeMAT, vn){
 
-    if (is.null(fixMAT)){
+    if (is.null(fixNUM)){
         return(edgeMAT)
     } else {
         if (nrow(edgeMAT)==0){
             return(edgeMAT)
         } else {
-            fixNUM  <- pairs2num(fixMAT,  vn)
+                                        #fixNUM  <- pairs2num(fixMAT,  vn)
                                         #print(fixNUM)
-            edgeNUM <- pairs2num(edgeMAT, vn)
+          edgeNUM <- pairs2num(edgeMAT, vn)
                                         #print(edgeNUM)
-            edgeMAT[(1:nrow(edgeMAT))[-na.omit(matchPrim(fixNUM,edgeNUM))],,drop=FALSE]
+          edgeMAT[(1:nrow(edgeMAT))[-na.omit(matchPrim(fixNUM,edgeNUM))],,drop=FALSE]
         }
     }
 }

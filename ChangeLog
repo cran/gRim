@@ -1,3 +1,9 @@
+2012-10-07 Søren Højsgaard <sorenh@math.aau.dk>	
+
+	* stepwise model selection speeded up
+	
+	* Version 0.1-14 uploaded			
+
 2012-09-09 Søren Højsgaard <sorenh@math.aau.dk>	
 
 	* Bug fixed in iplot
@@ -7,6 +13,8 @@
 	* Bug fixed i testdelete
 
 	* Simplifications in pFormula
+
+	* Version 0.1-13 uploaded		
 	
 2012-08-08 Søren Højsgaard <sorenh@math.aau.dk>	
 
