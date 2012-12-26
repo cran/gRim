@@ -5,22 +5,28 @@
 ciTest_ordinal <- function(x, set=NULL, statistic="dev", N=0, ...){
 
   statistic <- match.arg(statistic, c("deviance","wilcoxon","kruskal","jt"))
+  if (inherits(x,"data.frame")){
+    dataNames <- names(x)  
+  } else {
+    if (inherits(x,"table")){
+      dataNames <- names(dimnames(x))
+    } else {
+      stop("'x' must be either a table or a dataframe")
+    }
+  }
   if (is.null(set)){
-    set <- names(dimnames(x))
+    set <- dataNames
     set.idx <- 1:length(set)
   } else {
     if (inherits(set,"numeric")){
       set.idx <- set
-      set <- names(dimnames(x))[set.idx]
+      set <- dataNames[set.idx]
     } else
     if (inherits(set,c("formula","character"))){
       set <- unlist(rhsFormula2list(set))
-      set.idx <- match(set, names(dimnames(x)))
+      set.idx <- match(set, dataNames)
     }
   }
-  
-  #cat(sprintf("CHK: set:     %s\n", toString(set)))
-  #cat(sprintf("CHK: set.idx: %s\n", toString(set.idx)))
 
   .CI.ordinal(set.idx, set, dataset=x, test=statistic, N=N)
 
@@ -41,11 +47,17 @@ ciTest_ordinal <- function(x, set=NULL, statistic="dev", N=0, ...){
   ## Calculates the deviance, degrees of freedom and asymptotic P given an ftable (m).   
   LRT <- function(m, d1, d2) {  
     oneslice <- function(t,d1,d2) {  
-      dim(t) <- c(d1,d2); t1 <- addmargins(t)   
-      cm <- t1[d1+1,1:d2]; rm <- t1[1:d1,d2+1]; N<- t1[d1+1,d2+1]  
-      df <- (sum(cm>0)-1)*(sum(rm>0)-1)  
+      dim(t) <- c(d1,d2)
+      t1  <- addmargins(t)   
+      cm  <- t1[d1+1,1:d2]
+      rm  <- t1[1:d1,d2+1]
+      N   <- t1[d1+1,d2+1]  
+      df  <- (sum(cm>0)-1)*(sum(rm>0)-1)  
       dev <- 0  
-      if (df>0) {fv <- (rm %o% cm)/N; dev <- 2*sum(t*log(t/fv), na.rm=T)}  
+      if (df>0) {
+        fv <- (rm %o% cm)/N
+        dev <- 2*sum(t*log(t/fv), na.rm=T)
+      }  
       return(c(df=df, dev=dev))  
     }    
     ans <- apply(m, 1, oneslice, d1, d2)      
@@ -58,49 +70,58 @@ ciTest_ordinal <- function(x, set=NULL, statistic="dev", N=0, ...){
   ## Calculates the wilcoxon test, its mean and asymptotic P given an ftable (m).            
   wilcoxon <- function(m, d1, d2) {  
     oneslice <- function(t,d1,d2) {  
-      dim(t) <- c(d1,d2); t1 <- addmargins(t)   
-      cm <- t1[d1+1,1:d2]; rm <- t1[1:d1,d2+1]; N<- t1[d1+1,d2+1]  
-      r <- cumsum(c(0, cm[-d2]))+(1+cm)/2  
-      W <- sum(r*t[1,])  
+      dim(t) <- c(d1,d2)
+      t1 <- addmargins(t)   
+      cm <- t1[d1+1,1:d2]
+      rm <- t1[1:d1,d2+1]
+      N  <- t1[d1+1,d2+1]  
+      r  <- cumsum(c(0, cm[-d2]))+(1+cm)/2  
+      W  <- sum(r*t[1,])  
       EW <- (rm[1]/N)*sum(r*cm)  
       VW <- (rm[1]*rm[2]/(N*(N-1)))*sum(((r-EW/rm[1])^2)*cm)  
       return(c(W, EW, VW))  
     }      
     ans <- apply(m, 1, oneslice, d1, d2)      
-    W <- sum(ans[1,])  
-    EW <- sum(ans[2,])  
-    VW <- sum(ans[3,])  
-    P <- 2*(1 - pnorm(abs(W-EW), sd=sqrt(VW)))  
+    W   <- sum(ans[1,])  
+    EW  <- sum(ans[2,])  
+    VW  <- sum(ans[3,])  
+    P   <- 2*(1 - pnorm(abs(W-EW), sd=sqrt(VW)))  
     return(list(W=W, EW=EW, P=P))  
   }       
   
   ## Calculates the kruskal-wallis test, degrees of freedom and asymptotic P given an ftable (m).            
   kruskal <- function(m, d1, d2) {   
     oneslice <- function(t,d1,d2) {  
-      dim(t) <- c(d1,d2); t1 <- addmargins(t)   
-      cm <- t1[d1+1,1:d2]; rm <- t1[1:d1,d2+1]; N<- t1[d1+1,d2+1]  
-      r <- cumsum(c(0, cm[-d2]))+(1+cm)/2  
-      T <- sum(cm[1:d2]^3-cm[1:d2])/(N^3-N)  
-      f <- 12*((N*(N+1)*(1-T))^(-1))  
+      dim(t) <- c(d1,d2)
+      t1 <- addmargins(t)   
+      cm <- t1[d1+1,1:d2]
+      rm <- t1[1:d1,d2+1]
+      N  <- t1[d1+1,d2+1]  
+      r  <- cumsum(c(0, cm[-d2]))+(1+cm)/2  
+      T  <- sum(cm[1:d2]^3-cm[1:d2])/(N^3-N)  
+      f  <- 12*((N*(N+1)*(1-T))^(-1))  
       KW <- f*sum(((t%*%r-rm[1:d1]*(N+1)/2)^2)/rm[1:d1])  
       df <- (sum(rm>0)-1)  
       return(c(df=df, KW=KW))  
     }      
-    ans <- apply(m, 1, oneslice, d1, d2)      
+    ans    <- apply(m, 1, oneslice, d1, d2)      
     obs.KW <- sum(ans[2,])  
-    df<- sum(ans[1,])  
-    P <- 1 - pchisq(obs.KW,df)  
+    df     <- sum(ans[1,])  
+    P      <- 1 - pchisq(obs.KW,df)  
     return(list(KW=obs.KW, df=df, P=P))  
   }   
   
   ## Calculates the jonckheere-terpstra test, its mean and asymptotic P given an ftable (m).  
   jt <- function(m, d1, d2) {   
     oneslice<-function(t,d1,d2){  
-      dim(t)<-c(d1,d2); t1<-addmargins(t)  
-      cm<-t1[d1+1,1:d2]; rm<-t1[1:d1,d2+1]; N<-t1[d1+1,d2+1]  
-      W<-c()  
-      T<-c()  
-      R<-c()  
+      dim(t)<-c(d1,d2)
+      t1 <-addmargins(t)  
+      cm <-t1[d1+1,1:d2]
+      rm <-t1[1:d1,d2+1]
+      N  <-t1[d1+1,d2+1]  
+      W  <-c()  
+      T  <-c()  
+      R  <-c()  
       for(i in c(2:d1)){  
         for(j in c(1:(i-1))){  
           if(i != j){  
@@ -112,35 +133,39 @@ ciTest_ordinal <- function(x, set=NULL, statistic="dev", N=0, ...){
           T<-c(T)  
           R<-c(R)  
         }}  
-      JT<-sum(W*T)-sum(R)  
-      EJT<-sum(N^2-sum(rm^2))/4  
-      U1<-N*(N-1)*(2*N+5)-sum(rm*(rm-1)*(2*rm+5))-sum(cm*(cm-1)*(2*cm+5))  
-      U2<-sum(rm*(rm-1)*(rm-2))*sum((cm)*(cm-1)*(cm-2))  
-      U3<-sum((rm)*(rm-1))*sum((cm)*(cm-1))  
-      t1<-72  
-      t2<-36*N*(N-1)*(N-2)  
-      t3<-8*N*(N-1)  
-      VJT<-(U1/t1)+(U2/t2)+(U3/t3)   
+      JT  <-sum(W*T)-sum(R)  
+      EJT <-sum(N^2-sum(rm^2))/4  
+      U1  <-N*(N-1)*(2*N+5)-sum(rm*(rm-1)*(2*rm+5))-sum(cm*(cm-1)*(2*cm+5))  
+      U2  <-sum(rm*(rm-1)*(rm-2))*sum((cm)*(cm-1)*(cm-2))  
+      U3  <-sum((rm)*(rm-1))*sum((cm)*(cm-1))  
+      t1  <-72  
+      t2  <-36*N*(N-1)*(N-2)  
+      t3  <-8*N*(N-1)  
+      VJT <-(U1/t1)+(U2/t2)+(U3/t3)   
       return(c(JT, EJT,VJT))  
     }     
     ans <- apply(m, 1, oneslice, d1, d2)      
-    JT <- sum(ans[1,])  
+    JT  <- sum(ans[1,])  
     EJT <- sum(ans[2,])  
     VJT <- sum(ans[3,])  
-    P<- 2*(1 - pnorm(abs(JT-EJT), sd=sqrt(VJT)))  
+    P   <- 2*(1 - pnorm(abs(JT-EJT), sd=sqrt(VJT)))  
     return(list(JT=JT, EJT=EJT, P=P))  
   }   
   
   ## Returns row and column marginal totals for a given stratum.     
   rcsum <- function(t,d1,d2) {  
-    dim(t) <- c(d1,d2); t1 <- addmargins(t)   
-    cm <- t1[d1+1,1:d2]; rm <- t1[1:d1,d2+1]   
+    dim(t) <- c(d1,d2)
+    t1 <- addmargins(t)   
+    cm <- t1[d1+1,1:d2]
+    rm <- t1[1:d1,d2+1]   
     return(c(rm,cm))  
   }  
   
   ## Returns the deviances of Nsim random RxC tables with given margins  
   rdev <- function(tots, d1, d2, Nsim) {  
-    rm <- tots[1:d1]; cm <- tots[(d1+1):(d1+d2)]; N <- sum(rm)        
+    rm <- tots[1:d1]
+    cm <- tots[(d1+1):(d1+d2)]
+    N  <- sum(rm)        
     fv <- (rm %o% cm)/N  
     tablist <- r2dtable(Nsim, rm, cm)  
     return(sapply(tablist, function(t) 2*sum(t*log(t/fv), na.rm=T)))  
@@ -148,15 +173,18 @@ ciTest_ordinal <- function(x, set=NULL, statistic="dev", N=0, ...){
   
   ## Returns the wilcoxon rank sum stats of Nsim random RxC tables with given margins  
   wdev <- function(tots, d1, d2, Nsim) {  
-    rm <- tots[1:d1]; cm <- tots[(d1+1):(d1+d2)]     
-    r <- cumsum(c(0, cm[-d2]))+(1+cm)/2    
+    rm <- tots[1:d1]
+    cm <- tots[(d1+1):(d1+d2)]     
+    r  <- cumsum(c(0, cm[-d2]))+(1+cm)/2    
     tablist <- r2dtable(Nsim, rm, cm)  
     return(sapply(tablist, function(t) sum(r*t[1,1:d2])))    
   }  
   
   ## Returns the kruskal stats of Nsim random RxC tables with given margins  
   kdev <- function(tots, d1, d2, Nsim) {  
-    rm <- tots[1:d1]; cm <- tots[(d1+1):(d1+d2)]; N <- sum(rm)        
+    rm <- tots[1:d1]
+    cm <- tots[(d1+1):(d1+d2)]
+    N <- sum(rm)        
     r <- cumsum(c(0, cm[-d2]))+(1+cm)/2  
     T <- sum(cm[1:d2]^3-cm[1:d2])/(N^3-N)  
     f <- 12*((N*(N+1)*(1-T))^(-1))    
@@ -166,7 +194,9 @@ ciTest_ordinal <- function(x, set=NULL, statistic="dev", N=0, ...){
   
   ## Returns the jonckheere terpstra rank sum stats of Nsim random RxC tables with given margins  
   jtdev <- function(tots, d1, d2, Nsim) {  
-    rm <- tots[1:d1]; cm <- tots[(d1+1):(d1+d2)]; N <- sum(rm)  
+    rm <- tots[1:d1]
+    cm <- tots[(d1+1):(d1+d2)]
+    N <- sum(rm)  
     U<-function(t,d1,d2){  
       W<-c()  
       T<-c()  

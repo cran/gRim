@@ -1,3 +1,9 @@
+2012-12-23 Søren Højsgaard <sorenh@math.aau.dk>	
+
+	* bug fixed in ciTest_ordinal
+	
+	* Version 0.1-15 uploaded			
+
 2012-10-07 Søren Højsgaard <sorenh@math.aau.dk>	
 
 	* stepwise model selection speeded up

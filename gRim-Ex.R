@@ -118,13 +118,27 @@ flush(stderr()); flush(stdout())
 ### ** Examples
 
 library(gRim)
-data(dumping)
-ciTest_ordinal(dumping, c(2,1,3),stat="jt",N=1000)
-ciTest_ordinal(dumping, c("Operation","Symptom","Centre"),stat="jt",N=1000)
-ciTest_ordinal(dumping, ~Operation+Symptom+Centre,stat="jt",N=1000)
+data(dumping, package="gRbase")
+
+ciTest_ordinal(dumping, c(2,1,3), stat="jt", N=1000)
+ciTest_ordinal(dumping, c("Operation","Symptom","Centre"), stat="jt", N=1000)
+ciTest_ordinal(dumping, ~ Operation + Symptom + Centre, stat="jt", N=1000)
 
 data(reinis)
 ciTest_ordinal(reinis, c(1,3,4:6),N=1000)
+
+# If data is a dataframe
+dd     <- as.data.frame(dumping)
+ncells <- prod(dim(dumping))
+ff     <- dd$Freq
+idx    <- unlist(mapply(function(i,n) rep(i,n),1:ncells,ff))
+dumpDF <- dd[idx, 1:3]
+rownames(dumpDF) <- 1:NROW(dumpDF)
+
+ciTest_ordinal(dumpDF, c(2,1,3), stat="jt", N=1000)
+ciTest_ordinal(dumpDF, c("Operation","Symptom","Centre"), stat="jt", N=1000)
+ciTest_ordinal(dumpDF, ~ Operation + Symptom + Centre, stat="jt", N=1000)
+
 
 
 

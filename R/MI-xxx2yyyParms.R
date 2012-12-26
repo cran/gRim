@@ -35,7 +35,7 @@ ghk2pmsParms <- function(parms){
            res    <- list(g=log(parms[["p"]]),h=NULL, K=NULL, gentype="discrete")
          },
          "mixed"={
-           KK     <- .cholsolve(parms[["Sigma"]])           
+           KK     <- solveSPD(parms[["Sigma"]])           
            Q      <- nrow(KK)
            #.logdetSig <- -log(det(KK))
            .logdetSig <- -c(determinant.matrix(KK)[['modulus']])
@@ -47,7 +47,7 @@ ghk2pmsParms <- function(parms){
            res    <- list(g=gg, h=hh, K=KK, gentype="mixed")
          },
          "continuous"={
-           KK     <- .cholsolve(parms[["Sigma"]])
+           KK     <- solveSPD(parms[["Sigma"]])
            Q      <- nrow(KK)
            #detSig <- 1/det(KK) ##FIXME: brug det.matrix isf.
            detSig <- 1/c(determinant.matrix(KK, logarithm=FALSE)[['modulus']])
@@ -73,7 +73,7 @@ ghk2pmsParms <- function(parms){
            res <- list(p=pp/sum(pp), mu=NULL, Sigma=NULL, gentype="discrete")
          },
          "mixed"={
-           Sigma     <- .cholsolve(parms[['K']])
+           Sigma     <- solveSPD(parms[['K']])
            hh        <- parms[['h']]
            mu        <- Sigma %*% hh        # Kinv %*% h
            g.quad    <- parms[['g']] + colSumsPrim(hh * mu)/2
@@ -81,7 +81,7 @@ ghk2pmsParms <- function(parms){
            res       <- list(p=pp/sum(pp), mu=mu, Sigma=Sigma, gentype="mixed")  
          },
          "continuous"={
-           Sigma     <- .cholsolve(parms[['K']])
+           Sigma     <- solveSPD(parms[['K']])
            mu        <- Sigma %*% parms[['h']]
            res       <- list(p=1, mu=mu, Sigma=Sigma, gentype="continuous")
          })
@@ -105,12 +105,12 @@ pms2phkParms <- function(parms){
            res    <- list(p=parms[["p"]],h=NULL, K=NULL, gentype="discrete")
          },
          "mixed"={
-           KK     <- .cholsolve(parms[["Sigma"]])           
+           KK     <- solveSPD(parms[["Sigma"]])           
            hh     <- KK %*% parms[["mu"]] # h = Sigma.inv %*% mu
            res    <-list(p=parms[['p']], h=hh, K=KK, gentype="mixed")
          },
          "continuous"={
-           KK     <- .cholsolve(parms[["Sigma"]])
+           KK     <- solveSPD(parms[["Sigma"]])
            hh     <- KK %*% parms[["mu"]] # h = Sigma.inv %*% mu           
            res    <- list(p=parms[['p']], h=hh, K=KK,gentype="continuous")
          })
@@ -131,7 +131,7 @@ phk2ghkParms <- function(parms){
            Q      <- nrow(KK)
            detSig <- 1/det(KK)
            hh     <- parms[["h"]]
-           mu     <- .cholsolve(KK) %*% hh # K.inv %*% h
+           mu     <- solveSPD(KK) %*% hh # K.inv %*% h
            quad   <- colSumsPrim(hh * mu)
 
            gg     <- log(parms[["p"]]) + (- log(detSig) - Q*log(2*pi) - quad) / 2
@@ -141,7 +141,7 @@ phk2ghkParms <- function(parms){
            KK     <- parms[["K"]]           
            Q      <- nrow(KK)
            detSig <- 1/det(KK)
-           mu     <- .cholsolve(KK) %*% hh # K.inv %*% h
+           mu     <- solveSPD(KK) %*% hh # K.inv %*% h
            quad   <- colSumsPrim(hh * mu)
 
            gg     <- (- log(detSig) - Q*log(2*pi) - quad) / 2
@@ -161,12 +161,12 @@ phk2pmsParms<-function(parms){
            res <- list(p=parms[['g']], mu=NULL, Sigma=NULL, gentype="discrete")
          },
          "mixed"={
-           Sigma     <- .cholsolve(parms[['K']])
+           Sigma     <- solveSPD(parms[['K']])
            mu        <- Sigma %*% parms[['h']] # Kinv %*% h
            res       <- list(p=parms[['p']], mu=mu, Sigma=Sigma, gentype="mixed")  
          },
          "continuous"={
-           Sigma     <- .cholsolve(parms[['K']])
+           Sigma     <- solveSPD(parms[['K']])
            mu        <- Sigma %*% parms[['h']]
            res       <- list(p=1, mu=mu, Sigma=Sigma, gentype="continuous")
          })
@@ -185,7 +185,7 @@ ghk2phkParms<-function(parms){
            res <- list(p=pp/sum(pp), mu=NULL, Sigma=NULL, gentype="discrete")
          },
          "mixed"={
-           Sigma     <- .cholsolve(parms[['K']])
+           Sigma     <- solveSPD(parms[['K']])
            hh        <- parms[['h']]
            mu        <- Sigma %*% hh # Kinv %*% h
            g.quad    <- parms[['g']] + colSumsPrim(hh * mu)/2
@@ -193,7 +193,7 @@ ghk2phkParms<-function(parms){
            res       <- list(p=pp/sum(pp), h=hh, K=parms[['K']], gentype="mixed")  
          },
          "continuous"={
-           Sigma     <- .cholsolve(parms[['K']])
+           Sigma     <- solveSPD(parms[['K']])
            mu        <- Sigma %*% parms[['h']]
            res       <- list(p=1, h=parms[['h']], K=parms[['K']], gentype="continuous")
          })
@@ -210,7 +210,7 @@ ghk2phkParms<-function(parms){
 
   K.idx <- 3
   hh        <- parms[['h']]
-  mu        <- .cholsolve(parms[[K.idx]]) %*% hh
+  mu        <- solveSPD(parms[[K.idx]]) %*% hh
   logdetK   <- .logdet(parms[[K.idx]])
   Q         <- nrow(parms[[K.idx]])
 

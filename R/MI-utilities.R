@@ -71,17 +71,6 @@ print.MIparms <- function(x,simplify=TRUE,useN=FALSE, ...){
   sum(log(y^2))
 }
 
-.cholsolve <- function(a){
-
-  ##.Call("La_chol2inv",   .Call("La_chol", a, PACKAGE = "base"), ncol(a), PACKAGE = "base")
-  ##chol2inv(chol(a))
-  .Call("C_spdinv_arma", a , PACKAGE="gRim"   )
-}
-
-
-##.cholsolve <- function(a){  solve(a) }
-
-
 .colmult <- function(v, M){
   t.default(v*t.default(M))
 }

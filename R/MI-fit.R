@@ -418,7 +418,7 @@ print.MIfit <- function(x,...){
 
 .mModel_logLpms <- function(CGstats, Mparms){
 
-  Sigma.inv <- .cholsolve(Mparms[['Sigma']])
+  Sigma.inv <- solveSPD(Mparms[['Sigma']])
 
   n.i    <- as.numeric(CGstats[['n.obs']])
   N      <- sum(n.i)
