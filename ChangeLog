@@ -1,3 +1,9 @@
+2013-05-28 Søren Højsgaard <sorenh@math.aau.dk>	
+
+	* Minor change to comply with development version of R
+
+	* Version 0.1-16 uploaded			
+	
 2012-12-23 Søren Højsgaard <sorenh@math.aau.dk>	
 
 	* bug fixed in ciTest_ordinal

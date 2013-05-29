@@ -138,7 +138,7 @@ print.CGstats <- function(x,...){
 .split.by <- function(disc.names, indata, drop=FALSE){
 
   xt   <- xtabs(~., indata[,disc.names,drop=FALSE])
-  ooo  <- as.data.frame.table(xt, usNA="always")[,1:length(disc.names),drop=FALSE]
+  ooo  <- as.data.frame.table(xt, useNA="always")[,1:length(disc.names),drop=FALSE]
 
   ooostr <- .dfcols2namevec(ooo)
   facstr <- .dfcols2namevec(indata[,disc.names,drop=FALSE])
