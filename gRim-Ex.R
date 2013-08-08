@@ -269,7 +269,7 @@ flush(stderr()); flush(stdout())
 ### ** Examples
 
 gg     <- ug(~a:b:d+a:c:d+c:e)
-glist  <- maxClique(gg)[[1]]
+glist  <- getCliques(gg)
 adjmat <- as.adjMAT(gg)
 
 #### On a glist

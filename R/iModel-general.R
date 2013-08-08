@@ -13,7 +13,8 @@ summary.iModel <- function(object, ...){
 
   isg   <- object$isGraphical
   isd   <- object$isDecomposable
-  cq    <- maxClique(ugList(glist))$maxCliques
+  #cq    <- maxCliques(ugList(glist))$maxCliques
+  cq    <- getCliques(ugList(glist))# $maxCliques
   ans   <- structure(list(glist=glist, isGraphical=isg, isDecomposable=isd, cliques=cq),
                      class="iModelsummary")
   ans

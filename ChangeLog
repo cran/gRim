@@ -1,3 +1,9 @@
+2013-08-08 Søren Højsgaard <sorenh@math.aau.dk>	
+
+	* NAMESPACE file update so that fewer packages are loaded.
+	
+	* Version 0.1-78 uploaded			
+	
 2013-05-28 Søren Højsgaard <sorenh@math.aau.dk>	
 
 	* Minor change to comply with development version of R

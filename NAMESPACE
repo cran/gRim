@@ -1,2 +1,7 @@
 useDynLib(gRim)
 exportPattern("^[^\\.]")
+
+importFrom(igraph, igraph.to.graphNEL, igraph.from.graphNEL, get.adjacency,
+           V, "V<-", E, is.directed, "E<-", layout.lgl, plot.igraph,
+           graph.adjacency, is.dag)
+

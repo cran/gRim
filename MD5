@@ -1,6 +1,6 @@
-4c7d0aeba61d8b557e3f45fe7754ee6b *ChangeLog
-1ac6e3a046a8cfd06bd99070022a958b *DESCRIPTION
-4fa0010d37b7c375c16af25429fb520c *NAMESPACE
+24cf1dd1a6eac8cc7337051046326759 *ChangeLog
+e03703a9cf0db0c45b44790581d195c2 *DESCRIPTION
+f7d308ddda1c249d154e90e51f35c249 *NAMESPACE
 cf56d1ec894d0b2fc139d561e87b47f7 *R/CGstats.R
 85ebee514bd1ac23c5dd951e88730d15 *R/GC-compare.R
 36bd32035f1990e401279466918e6b4e *R/MI-comparemodels.R
@@ -25,7 +25,7 @@ e6c622bfee4b2f52c6cefc66f3b92d10 *R/iModel-backwardforward.R
 61570f4d34e48a7a2c2a27801defd7a1 *R/iModel-coerce.R
 0d7d4ee1cf8612358f4ffeab90b884b0 *R/iModel-compareModel.R
 4115eb8883736951c786e1b460609358 *R/iModel-dmod.R
-540370d3224982d80ed8c48172e9132c *R/iModel-general.R
+0fb120ca3999a40f665cf1d53415b314 *R/iModel-general.R
 44c22b25a40917bbf263b409d2683e9c *R/iModel-labelEdges.R
 987e0e0fda8c124a1c0b5c5889307e61 *R/iModel-mmod.R
 15fb2f7f55b3b4e9d4ecf78850b40c67 *R/iModel-plot.R
@@ -39,10 +39,10 @@ d036a356acd3f531dfaa34e2c0468124 *R/pFormula2.R
 50de0106b4804cf4283e055a1384125b *R/utilities.R
 685117ebfa906293ca27a4639313057b *R/zzz.R
 a2208519f3706461c688051d5ded648b *Wishlist.txt
-e7e440dbcff4c854de92240152f1bc3b *gRim-Ex.R
+9f00cdc40a406ad24afb9c31c4e13812 *gRim-Ex.R
 0dd555273e3f05b178c7d37b868b4075 *inst/doc/gRim.R
 994131ee99f2a5550de5de3c67e972d2 *inst/doc/gRim.Rnw
-7c357b4754928cd4ba6c0575e8ddf2a0 *inst/doc/gRim.pdf
+ee9cbd34ebc402346b44eba98fdcd486 *inst/doc/gRim.pdf
 9cbddcdd97c7ac6e2ef56bf068cee422 *man/CGstats.Rd
 392b542da1c897d88444da1e032da14d *man/ciTest_df.Rd
 96073ec37d5d6c1bca39c90708584652 *man/ciTest_generic2.Rd
@@ -54,7 +54,7 @@ bbab6b2b31c7b165ec0307e29600278d *man/ciTest_mvn.Rd
 5f4d70eb47c7065eea47ca844e19fe08 *man/dmod.Rd
 3c4e3c69977b6edcf70035c6a1e0c51f *man/effloglin.Rd
 f2b75813eca7792bdb17d7056b6ad6fe *man/gRim-internal.Rd
-88229b7d7765df6cee55edb669727926 *man/getEdges.Rd
+ab44eca46764358c6e3cb42a136bfffc *man/getEdges.Rd
 828cafac4422c545496da1e425118e27 *man/ggmfit.Rd
 d21676fef92599ca488681ae1091416b *man/ghk2phkParms.Rd
 84af7b6ded3243f43fdd863fed8cde3c *man/iModel-stepwise.Rd
