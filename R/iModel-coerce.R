@@ -1,6 +1,8 @@
 ## FIXME: We also want to coerce to igraphs; otherwise people get confused...
 
-setOldClass(c("dModel","cModel","mModel"))
+setOldClass("cModel")
+setOldClass("dModel")
+setOldClass("mModel")
 
 setAs("dModel", "graphNEL",
       function(from){

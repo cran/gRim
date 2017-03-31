@@ -1,17 +1,30 @@
 \name{gRim-internal}
 
+\alias{updateA}
+\alias{ghk2pmsParms_}
+\alias{pms2ghkParms_}
+\alias{normalize_ghkParms_}
+\alias{update_ghkParms_}
+
+\alias{getmi}
+
 \alias{dModel}
 \alias{cModel}
 \alias{mModel}
 
+\alias{addEdge_glist}
+\alias{addTerm_glist}
+\alias{dropEdge_glist}
+\alias{dropTerm_glist}
+
+
+
+
 
 
 %% iModel methods (some needs .Rd-files)
-\alias{logLik.iModel}
-\alias{summary.iModel}
-\alias{print.iModelsummary}
 \alias{update.iModel}
-\alias{extractAIC.iModel}
+
 
 %% Printing
 \alias{print.iModel}
@@ -26,13 +39,12 @@
 \alias{fit.cModel}
 \alias{fit.dModel}
 \alias{fit.mModel}
-\alias{fitted.dModel}
+
 
 %% FIXME
 \alias{logLik.mModel} %% Bør erstattes med iModel metoden
 \alias{update.mModel} %% Bør erstattes med iModel metoden
-\alias{formula.iModel}
-\alias{terms.iModel}
+
 
 %% Needs .Rd files
 \alias{CItest.data.frame}

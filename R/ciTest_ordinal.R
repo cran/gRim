@@ -1,7 +1,61 @@
 # Functions for calculating exact conditional independence tests for discrete data.
 # Presently supported: deviance and wilcoxon
 
-
+#' @title A function to compute Monte Carlo and asymptotic tests of conditional
+#'     independence for ordinal and/or nominal variables.
+#' 
+#' @description The function computes tests of independence of two variables,
+#'     say u and v, given a set of variables, say S. The deviance, Wilcoxon,
+#'     Kruskal-Wallis and Jonkheere-Terpstra tests are supported.  Asymptotic
+#'     and Monte Carlo p-values are computed.
+#' 
+#' @details The deviance test is appropriate when u and v are nominal; Wilcoxon,
+#'     when u is binary and v is ordinal; Kruskal-Wallis, when u is nominal and
+#'     v is ordinal; Jonckheere-Terpstra, when both u and v are ordinal.
+#' 
+#' @param x A dataframe or table.
+#' @param set The variable set (u,v,S), given either as an integer vector of the
+#'     column numbers of a dataframe or dimension numbers of a table, or as a
+#'     character vector with the corresponding variable or dimension names.
+#' @param statistic Either "deviance", "wilcoxon", "kruskal" or "jt".
+#' @param N The number of Monte Carlo samples. If N<=0 then Monte Carlo p-values
+#'     are not computed.
+#' @param \dots Additional arguments, currently not used
+#' @return A list including the test statistic, the asymptotic p-value and, when
+#'     computed, the Monte Carlo p-value.  \item{P}{Asymptotic p-value}
+#'     \item{montecarlo.P}{Monte Carlo p-value}
+#' @author Flaminia Musella, David Edwards, Søren Højsgaard,
+#'     \email{sorenh@@math.aau.dk}
+#' @seealso \code{\link{ciTest_table}}, \code{\link{ciTest}}
+#' @references See Edwards D. (2000), "Introduction to Graphical Modelling", 2nd
+#'     ed., Springer-Verlag, pp. 130-153.
+#' @keywords htest
+#' @examples
+#' 
+#' library(gRim)
+#' data(dumping, package="gRbase")
+#' 
+#' ciTest_ordinal(dumping, c(2,1,3), stat="jt", N=1000)
+#' ciTest_ordinal(dumping, c("Operation","Symptom","Centre"), stat="jt", N=1000)
+#' ciTest_ordinal(dumping, ~ Operation + Symptom + Centre, stat="jt", N=1000)
+#' 
+#' data(reinis)
+#' ciTest_ordinal(reinis, c(1,3,4:6),N=1000)
+#' 
+#' # If data is a dataframe
+#' dd     <- as.data.frame(dumping)
+#' ncells <- prod(dim(dumping))
+#' ff     <- dd$Freq
+#' idx    <- unlist(mapply(function(i,n) rep(i,n),1:ncells,ff))
+#' dumpDF <- dd[idx, 1:3]
+#' rownames(dumpDF) <- 1:NROW(dumpDF)
+#' 
+#' ciTest_ordinal(dumpDF, c(2,1,3), stat="jt", N=1000)
+#' ciTest_ordinal(dumpDF, c("Operation","Symptom","Centre"), stat="jt", N=1000)
+#' ciTest_ordinal(dumpDF, ~ Operation + Symptom + Centre, stat="jt", N=1000)
+#' 
+#' 
+#' @export ciTest_ordinal
 ciTest_ordinal <- function(x, set=NULL, statistic="dev", N=0, ...){
 
   statistic <- match.arg(statistic, c("deviance","wilcoxon","kruskal","jt"))

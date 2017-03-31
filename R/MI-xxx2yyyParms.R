@@ -5,28 +5,42 @@
 #####################################################################
 
 pms2ghkParms <- function(parms){
-##   cat("----------------\npms2ghkParms\n")
-##   str(parms)
-
-  res <- .Call("C_pms2ghk", parms)
-  val <- c(res, parms[-(1:4)])
-  val
-
-##   .pms2ghkParms(parms)
-
+    c(.Call("C_pms2ghk", parms), parms[-(1:4)])
 }
 
 ghk2pmsParms <- function(parms){
-##   cat("----------------\nghk2pmsParms\n")
-##   str(parms)
-
-  res <- .Call("C_ghk2pms", parms)
-  val <- c(res, parms[-(1:4)])
-  val
-
-##   .ghk2pmsParms(parms)
-
+    c(.Call("C_ghk2pms", parms), parms[-(1:4)])
 }
+
+
+
+
+
+
+
+#' pms2ghkParms <- function(parms){
+#' ##   cat("----------------\npms2ghkParms\n")
+#' ##   str(parms)
+
+#'   res <- .Call("C_pms2ghk", parms)
+#'   val <- c(res, parms[-(1:4)])
+#'   val
+
+#' ##   .pms2ghkParms(parms)
+
+#' }
+
+#' ghk2pmsParms <- function(parms){
+#' ##   cat("----------------\nghk2pmsParms\n")
+#' ##   str(parms)
+#'   res <- .Call("C_ghk2pms", parms)
+#'   val <- c(res, parms[-(1:4)])
+#'   val
+#' }
+
+
+
+
 
 .pms2ghkParms <- function(parms){
   ##parms <- unclass(parms)  
@@ -176,6 +190,22 @@ phk2pmsParms<-function(parms){
   return(val)
 }
 
+
+
+#' Conversion between different parametrizations of mixed interaction models.
+#' 
+#' Functions to convert between canonical parametrization (g,h,K), moment
+#' parametrization (p,m,S) and mixed parametrization (p,h,K).
+#' 
+#' 
+#' @aliases ghk2phkParms ghk2pmsParms phk2ghkParms phk2pmsParms pms2ghkParms
+#'     pms2phkParms
+#' @param parms Parameters of a mixed interaction model
+#' @return Parameters of a mixed interaction model.
+#' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
+#' @keywords utilities
+#' 
+#' @export ghk2phkParms
 ghk2phkParms<-function(parms){
   ##parms <- unclass(parms)  
   switch(parms[['gentype']],
@@ -225,6 +255,42 @@ ghk2phkParms<-function(parms){
   parms[['g']] <- g.new
   parms
 }
+
+## sandbox
+.normalize.ghkParms <- function(parms){
+
+  K.idx <- 3
+  hh        <- parms[['h']]
+  mu        <- solveSPD(parms[[K.idx]]) %*% hh
+  logdetK   <- .logdet(parms[[K.idx]])
+  Q         <- nrow(parms[[K.idx]])
+
+  #cat("logdetK=", logdetK, "\n")
+  #print(list(dimh=dim(hh), dimK=dim(parms[[K.idx]])))
+  
+  #print(hh * mu)
+  quad   <- colSumsPrim(hh * mu)
+  #print(list(dimh=dim(hh), dimK=dim(parms[[K.idx]]), dimq=dim(quad)))
+  #' #' print(parms[['g']])
+  #' #' print(quad)
+
+  zzz    <- parms[['g']] + quad / 2
+  ##print(zzz)
+  ppp    <- exp( zzz - mean.default(zzz))
+  ##print(ppp)
+  normconst <- sum(ppp)
+  pppn      <- ppp / normconst
+
+  g.new <- log(pppn) + (logdetK - Q*log(2*pi) - quad)/2
+
+  #cat("g.new:\n"); print(g.new)
+  parms[['g']] <- g.new
+  parms
+}
+
+
+
+
 
 CGstats2mmodParms <- function(parms, type="ghk"){
   type <- match.arg(type, c("ghk","pms"))

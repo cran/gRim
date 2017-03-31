@@ -11,20 +11,27 @@
 \usepackage[latin1]{inputenc}
 \usepackage{GMIR}
 \usepackage{Sweave,amsmath,amsfonts,bm,color}
-\usepackage[authoryear,round]{natbib}
+%%\usepackage[authoryear,round]{natbib}
 \bibliographystyle{plainnat}
 \usepackage{a4wide}
-\usepackage[inline,nomargin,draft]{fixme}
-\usepackage{natbib}
+%%\usepackage[inline,nomargin,draft]{fixme}
+%%\usepackage{natbib}
 \usepackage{boxedminipage}
 \usepackage{shortvrb}
 \MakeShortVerb|
 
-\author{
-  S{\o}ren H{\o}jsgaard\\Aarhus University, Denmark
-}
 
-\title{On the Usage of the  \pkg{gRim} Package\\ ** WORKING DOCUMENT **}
+
+<<echo=FALSE,print=FALSE>>=
+require( gRbase )
+prettyVersion <- packageDescription("gRim")$Version
+prettyDate <- format(Sys.Date())
+@
+
+\title{On the usage of the \pkg{gRim} package}
+\author{S{\o}ren H{\o}jsgaard}
+\date{\pkg{gRim} version \Sexpr{prettyVersion} as of \Sexpr{prettyDate}}
+
 
 \begin{document}
 \SweaveOpts{prefix.string=figures/GRIM, keep.source=T}
@@ -46,8 +53,6 @@
 
 \maketitle
 \tableofcontents
-
-\listoffixmes
 
 \parindent0pt\parskip5pt
 
@@ -72,7 +77,7 @@
 <<echo=FALSE>>=
 dir.create("figures")
 oopt <- options()
-options("digits"=4, "width"=80, "prompt"=" ", "continue"="  ")
+options("digits"=4, "width"=80)
 options(useFancyQuotes="UTF-8")
 @ %def
 
@@ -163,7 +168,7 @@ log--likelihood and |mdim| is the number of parameters in the model
 (no adjustments have been made for sparsity of data).
 The |ideviance| and |idf| gives the deviance and degrees of
 freedom between the model and the independence model for the same
-variables. |deviance| and |df| is the deviance and degrees of
+variables and |deviance| and |df| is the deviance and degrees of
 freedom between the model and the saturated model for the same
 variables.
 
@@ -187,7 +192,7 @@ A summary of a model is provided by the \comi{summary()} function:
 summary(dm1)
 @ %def
 
-\fxnote{The summary() method leaves a bit to be desired...}
+\footnote{The summary() method leaves a bit to be desired...}
 
 
 
@@ -236,10 +241,7 @@ Using \comi{iplot()} and \comi{plot()}. The convention for both
 methods is that discrete variables are drawn as grey dots and
 continuous variables as white dots.  1) \comi{iplot()} creates an
 \code{igraph} object and plots this. 2) 2) \comi{plot()} creates a
-\code{graphNEL} object and plots this. However, to plot a
-\code{graphNEL} object, the package \code{Rgraphviz} and the external
-program \code{Graphviz} must be installed installed.
-
+\code{graphNEL} object and plots this.
 
 @
 <<fig=T>>=
@@ -264,7 +266,7 @@ cm1 <- cmod(~Fat11:Fat12 + Fat12:Fat13 + Fat11:Fat13, data=carcass)
 cm1
 @ %def
 
-\fxnote{Harmonize cmod() output with that of dmod()}
+\footnote{Harmonize cmod() output with that of dmod()}
 
 @
 <<fig=T>>=
@@ -281,7 +283,7 @@ mm1 <- mmod(~.^., data=milkcomp1)
 mm1
 @ %def
 
-\fxnote{Harmonize mmod() output with that of dmod()}
+\footnote{Harmonize mmod() output with that of dmod()}
 
 @
 <<fig=T>>=
@@ -444,9 +446,6 @@ observed test statistic is in this distribution.  This is called a
 ciTest(reinis, set=c("systol","smoke","family","phys"), method='MC')
 @ %def
 
-\fxnote{Missing ciTest for continuous and mixed data...}
-
-
 \section{Fundamental methods for inference}
 \label{sec:fundamental}
 
@@ -513,7 +512,7 @@ difference in AIC between the candidate model and the original
 model. A negative value of AIC would have suggested that the candidate
 model is to be preferred.
 
-\fxnote{A function for testing addition / deletion of more general
+\footnote{A function for testing addition / deletion of more general
   terms is needed.}
 
 
@@ -579,7 +578,7 @@ testInEdges(dm5, getInEdges(ugList(dm5$glist), type="decomposable"),
 
 
 
-\section{Stepwise Model Selection}
+\section{Stepwise model selection}
 \label{sec:stepwise}
 
 Two functions are currently available for model selection:
@@ -729,7 +728,7 @@ the starting model already, they will remain in the final model.
 \subsection{Adjusting for sparsity}
 \label{sec:xxx}
 
-\fxnote{Comment on adjustment for sparsity in testadd() and testdelete()}
+\footnote{Comment on adjustment for sparsity in testadd() and testdelete()}
 
 
 % \subsection{Sparse Contingency Tables}
@@ -752,7 +751,7 @@ the starting model already, they will remain in the final model.
 % \subsection{A space--efficient implementation of IPS for contingency tables}
 % \label{sec:xxx}
 
-% \fxnote{effloglin() is not the best name. Perhaps loglineff() is a bit
+% \footnote{effloglin() is not the best name. Perhaps loglineff() is a bit
 %   better. Should start with loglin...}
 
 % Consider a hierarchical log--linear model with generating class $\calA
@@ -998,6 +997,8 @@ str(dm3[c("varNames","conNames","conLevels")])
 
 
 
+%%\listoffixmes
+
 
 \end{document}
 
@@ -1097,9 +1098,9 @@ str(dm3[c("varNames","conNames","conLevels")])
 % getInEdges(cm1, type="decomposable")
 % @ %def
 
-% \fxnote{getInEdges/getOutEdges: type=''decomposable'' is a silly value for the argument}
+% \footnote{getInEdges/getOutEdges: type=''decomposable'' is a silly value for the argument}
 
-% \fxnote{getInEdges/getOutEdges: Should be possible to have edges as a
+% \footnote{getInEdges/getOutEdges: Should be possible to have edges as a
 %   matrix instead. Perhaps even as default.}
 
 % \subsection{\code{getOutEdges()}}

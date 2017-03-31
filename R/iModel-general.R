@@ -1,25 +1,45 @@
 
-logLik.iModel <- function(object,...)
-  structure(object$fitinfo$logL, df=object$fitinfo$dimension["df"], class="logLik")
-
-## Returns (df, AIC=-2logL + k df), so the objective is to mimimize this quantity
-##
-extractAIC.iModel <- function(fit, scale, k = 2, ...){
-  c(fit$fitinfo$df, fit$fitinfo$dev - 2*fit$fitinfo$dimension["df"])
+#' @title General functions related to iModels
+#'
+#' @description General functions related to iModels
+#'
+#' @name iModel-general
+#'
+#' @param object,fit,x An \code{iModel} object.
+#' 
+#' @rdname iModel-general
+logLik.iModel <- function(object, ...){
+    val <- object$fitinfo$logL
+    attr(val, "df") <- unname( object$fitinfo$dimension["mod.dim"] )
+    attr(val, "nobs") <- sum(object$datainfo$data)
+    class(val) <- "logLik"
+    val
 }
 
-summary.iModel <- function(object, ...){
-  glist <- object$glist
 
-  isg   <- object$isGraphical
-  isd   <- object$isDecomposable
-  #cq    <- maxCliques(ugList(glist))$maxCliques
+#' @rdname iModel-general
+#' @param scale Unused (and irrelevant for these models)
+#' @param k Weight of the degrees of freedom in the AIC formula
+#' @param ... Currently unused.
+#' 
+extractAIC.iModel <- function(fit, scale, k = 2, ...){
+    unname(c(fit$fitinfo$dimension["mod.dim"],
+             -2*fit$fitinfo$logL + k*fit$fitinfo$dimension["mod.dim"]))
+}
+
+#' @rdname iModel-general
+summary.iModel <- function(object, ...){
+  glist <- getmi(object, "glist")
+  isg   <- getmi(object, "isGraphical")
+  isd   <- getmi(object, "isDecomposable")
+
   cq    <- getCliques(ugList(glist))# $maxCliques
   ans   <- structure(list(glist=glist, isGraphical=isg, isDecomposable=isd, cliques=cq),
                      class="iModelsummary")
   ans
 }
 
+#' @rdname iModel-general
 print.iModelsummary <- function(x,...){
   cat(sprintf("is graphical=%s; is decomposable=%s\n", x$isGraphical, x$isDecomposable))
   cat("generators (glist):\n")
@@ -33,22 +53,52 @@ print.iModelsummary <- function(x,...){
 }
 
 .glist2formula <- function (f) {
-  if (inherits(f, "formula")) 
+  if (inherits(f, "formula"))
     return(f)
-  ans <- try(as.formula(paste("~", paste(unlist(lapply(f, paste, collapse = "*")), 
+  ans <- try(as.formula(paste("~", paste(unlist(lapply(f, paste, collapse = "*")),
                                          collapse = "+")), .GlobalEnv),silent=TRUE)
   if (inherits(ans, "try-error"))
     stop("Unable to create formula from list. \nCould be due to white space, strange characters etc. in variable names\n")
   ans
 }
 
+#' @rdname iModel-general
 formula.iModel <- function(x,...){
 	#list2rhsFormula(x$glist)
   .glist2formula(x$glist)
 }
 
-terms.iModel <- function(x,...){
+#' @rdname iModel-general
+terms.iModel <- function(x, ...){
 	x$glist
 }
 
+#' @rdname iModel-general
+isGraphical.dModel <- function(x){
+    gRbase::isGraphical.default( terms(x) )
+}
 
+#' @rdname iModel-general
+isDecomposable.dModel <- function(x){
+    gRbase::isDecomposable.default( terms(x) )
+}
+
+#' @rdname iModel-general
+modelProperties <- function(object){
+    UseMethod("modelProperties")
+}
+
+#' @rdname iModel-general
+modelProperties.dModel <- function(object){
+    x <- terms( object )
+    vn <- unique(unlist(x))
+    amat <- glist2adjMAT(x, vn = vn)
+    cliq <- maxCliqueMAT(amat)[[1]]
+    isg <- all(unlist(lapply(cliq, function(cq) isin(x, cq))))
+    isd <- if (isg) {
+               length(mcsMAT(amat)) > 0
+           }
+           else FALSE
+    
+    c(isGraphical=isg, isDecomposable=isd)
+}

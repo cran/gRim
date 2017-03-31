@@ -32,8 +32,9 @@ fit.mModel <- function(object, method="general", details=0, eps.parm=1e-6, maxit
   return(object)
 }
 
+
 print.MIfit <- function(x,...){
-  cat("MIfit:\n")
+  ##cat("MIfit:\n")
   cat(sprintf("components: %s \n", toString(names(x))))
   print(x[c("parms","logL","init.logL","dimension")])
   return(invisible(x))
@@ -52,30 +53,26 @@ print.MIfit <- function(x,...){
 .fitmModel <- function(object, method="general", details=0, eps.parm=1e-6, eps.logL=1e-6, maxit=100,...){
 
   t.start <- proc.time()
-
+  
 ### Generate initial parameter value
 ###
   .infoPrint(details,1, "fit.mModel: Creating initial values\n")
   Mparms <- .CGstats2initpms(object$datainfo$CGstats)
   Cparms <- pms2ghkParms(Mparms)
-  ##cat("INITIAL PARAMETERS:\n"); print(Mparms)
-
-##   Mp <<- Mparms
-##   Cp <<- Cparms
   
 ### Generator lists
 ###
   Ad.list <- object$modelinfo$glist.num.disc
   Ac.list <- object$modelinfo$glist.num.cont
-
+  
 ### Find weak marginal model for each generator
 ###
   WMDghk <- .getWeakMarginalDataList(object$datainfo$CGstats,
                                      Ad.list, Ac.list, type="ghk", details=details)
-  WMDpms <- lapply(WMDghk, ghk2pmsParms)
 
-##   Wd <<- WMDghk
-##   Wp <<- WMDpms
+  ## WMDpms <- lapply(WMDghk, ghk2pmsParms)
+  ## The new version of ghk2pmsParms_ is really a timesaver here
+  WMDpms <- lapply(WMDghk, ghk2pmsParms_)
   
 ### Iterate to maximize logL
 ###
@@ -83,14 +80,15 @@ print.MIfit <- function(x,...){
   ans <- .mModel_iterate(Mparms, Cparms, Ad.list, Ac.list,
                          WMDghk, WMDpms, object$datainfo$CGstats,
                          method, eps.parm, eps.logL, maxit, details)
-
+  
   ans$WMDghk      <- WMDghk
   ans$init.parms  <- Mparms
   class(ans)      <- "MIfit"
   t.use           <- proc.time()-t.start
-  #cat("Fitting time:",t.use[1],"\n")
+                                        #cat("Fitting time:",t.use[1],"\n")
   return(ans)
 }
+
 
 ########################################################################
 ###
@@ -176,21 +174,20 @@ print.MIfit <- function(x,...){
   prev.logL   <- logL
   logL.fail   <- 0
 
+  ##pmp.old <<- Mparms
+  
   if (method=="general")
     .innerloop <- .standard.innerloop
   else
     .innerloop <- .stephalving.innerloop
 
-
-  for (ii in 1:length(Ad.list)){
+  for (ii in seq_along( Ad.list )){
     Ad.idx    <- Ad.list[[ii]]
     Ac.idx    <- Ac.list[[ii]]
     EEghk     <- WMDghk[[ii]]
     EEpms     <- WMDpms[[ii]]
     AApms     <- weakMarginalModel(Mparms, disc=Ad.idx, cont=Ac.idx, type="pms", details=details)
-##    AAp <<- AApms
     AAghk     <- pms2ghkParms(AApms)
-##    AAg <<- AAghk
     zzz       <- .innerloop(Mparms, Cparms, Ad.idx, Ac.idx,
                             EEghk, EEpms, AAghk, AApms, CGstats, scale, prev.logL, details)
     Mparms    <- zzz$Mparms
@@ -199,6 +196,9 @@ print.MIfit <- function(x,...){
     logL.fail <- logL.fail + zzz$logL.fail
   }
 
+  #' mp.old <<- Mparms
+  #' stop()
+  
   curr.logL <- .mModel_logLpms(CGstats,Mparms)
   d.logL    <- curr.logL - prev.logL
   d.parms   <- .mModel_parmdiff(Mparms, prev.Mparms)
@@ -218,7 +218,10 @@ print.MIfit <- function(x,...){
   new.Cparms <- .update.ghkParms(Cparms, Ad.idx, Ac.idx,
                                  EEghk, EEpms, AAghk, AApms, scale, CGstats, details=details)
 
-  new.Mparms <- ghk2pmsParms(new.Cparms)
+  ##ncp.old <<- new.Cparms
+  ##new.Mparms <- ghk2pmsParms(new.Cparms)
+  new.Mparms <- ghk2pmsParms_(new.Cparms) 
+
   curr.logL  <- d.logL <- d.parms <- NA
   logL.fail  <- as.numeric(d.logL < 0)
 
@@ -254,7 +257,9 @@ print.MIfit <- function(x,...){
   repeat{
     new.Cparms <- .update.ghkParms(good.Cparms, Ad.idx, Ac.idx,
                                    EEghk, EEpms, AAghk, AApms, scale, CGstats, details=details)
-    new.Mparms <- ghk2pmsParms(new.Cparms)
+    ##new.Mparms <- ghk2pmsParms(new.Cparms)
+    new.Mparms <- ghk2pmsParms_(new.Cparms)
+    
     curr.logL  <- .mModel_logLpms(CGstats, new.Mparms)
     d.logL     <- curr.logL - prev.logL
     d.parms    <- .mModel_parmdiff(new.Mparms, prev.Mparms)
@@ -314,106 +319,126 @@ print.MIfit <- function(x,...){
 ### This is where the parameter updates take place.
 ###
 ###########################################################################
+
 .update.ghkParms <- function(Cparms, Ad.idx, Ac.idx, EEghk, EEpms, AAghk, AApms, scale, CGstats, details=0) {
+
+    #' cat(".update.ghkParms: Cparms:\n"); print(Cparms)
+    #cat("AAghk:\n"); print(AAghk)
 
   g.idx <- 1
   h.idx <- 2
   K.idx <- 3
 
+  normalize.ghkParms <- .normalize.ghkParms
+  ##normalize.ghkParms <- normalize_ghkParms_
+  ghk2pmsParmsFUN    <- ghk2pmsParms
+  
   .infoPrint(details,5, cat(sprintf(".update.ghkParms: A=%8s\n",
                                     .toString(c("{",Ad.idx,"|", Ac.idx,"}")))))
   gt <- .genType(Ad.idx, Ac.idx)
+  #cat("generator", gt, "\n")
   d.parms.crit <- 0.00001
 
+    #print(gt)
   if (details>=5){
     cat("PRE UPDATED marginal OBSERVED // FITTED values - moment form\n")
-    print(rbind(.as.matrix(ghk2pmsParms(EEghk)),.as.matrix(ghk2pmsParms(AAghk))))
+    print(rbind(.as.matrix(ghk2pmsParmsFUN(EEghk)),.as.matrix(ghk2pmsParmsFUN(AAghk))))
   }
 
-##  cat(".update.ghkParms - calling .mModel_parmdiff\n")
+  ##  cat(".update.ghkParms - calling .mModel_parmdiff\n")
   marg.d.parms <- .mModel_parmdiff(AApms, EEpms)
   .infoPrint(details,5, cat(sprintf("PARMDIF=%f\n", marg.d.parms)))
+  
+  ##  cat("Cparms:\n"); print(Cparms)
+    #Cparms<<-Cparms
 
-  if (marg.d.parms>d.parms.crit){
-    
-    if (details>=5){
-      cat("PRE UPDATE Mparms:\n");
-      print(.MIparms2matrix(ghk2pmsParms(Cparms)))
-      cat("PRE UPDATED marginal OBSERVED // FITTED values - canonical form\n")
-      print(rbind(.as.matrix((EEghk)),.as.matrix((AAghk))))
-      cat("PRE UPDATE Cparms:\n");
-      print(.MIparms2matrix((Cparms)))
-    }
+  if (marg.d.parms > d.parms.crit){
+      
+      if (details>=5){
+          cat("PRE UPDATE Mparms:\n");
+          print(.MIparms2matrix(ghk2pmsParmsFUN(Cparms)))
+          cat("PRE UPDATED marginal OBSERVED // FITTED values - canonical form\n")
+          print(rbind(.as.matrix((EEghk)),.as.matrix((AAghk))))
+          cat("PRE UPDATE Cparms:\n");
+          print(.MIparms2matrix((Cparms)))
+      }
+      
+      switch(gt,
+             "discrete"={
+                 ##cat("Cparms//Mparms BEFORE update:\n");  print(Cparms)
+                 upd.g    <- scale*(EEghk[['g']] - AAghk[['g']])
+                 g.new    <- tableOp2(Cparms[['g']], upd.g, `+`, restore=TRUE)
+                                        #max.chg <- c(max(abs(upd.g)),-1,-1)
+                 res <- list(g=g.new, h=Cparms[['h']], K=Cparms[['K']])
+                 ##r1 <<- res
+                 res <- normalize.ghkParms(res)
+                 ##r2 <<- res
+                 res <- c(res[1:3], Cparms[-(1:3)])
+                 ##cat("Cparms//Mparms AFTER update:\n");  print(res)
+             },
+             "continuous"={
 
-    switch(gt,
-           "discrete"={
-             ##cat("Cparms//Mparms BEFORE update:\n");  print(Cparms)
-             upd.g    <- scale*(EEghk[['g']] - AAghk[['g']])
-             g.new    <- tableOp2(Cparms[['g']], upd.g, `+`, restore=TRUE)
-             #max.chg <- c(max(abs(upd.g)),-1,-1)
-             res <- list(g=g.new, h=Cparms[['h']], K=Cparms[['K']])
-             res <- .normalize.ghkParms(res)
-             res <- c(res[1:3], Cparms[-(1:3)])
-             ##cat("Cparms//Mparms AFTER update:\n");  print(res)
-           },
-           "continuous"={
-             h.new   <- Cparms[['h']]
-             upd.h   <- scale * (EEghk[['h']]-AAghk[['h']])
-             for (jj in 1:ncol(h.new))
-               h.new[Ac.idx,jj] <- Cparms[['h']][Ac.idx,jj,drop=FALSE] + upd.h
-             upd.k   <- scale * (EEghk[["K"]] - AAghk[["K"]])
-             K.new   <- Cparms[['K']]
-             K.new[Ac.idx,Ac.idx] <- K.new[Ac.idx,Ac.idx] + upd.k
-             ## cat("cont: upd.h:\n"); print(cbind(EEghk[['h']], AAghk[['h']], upd.h))
-             ## cat("cont: upd.k:\n"); print(cbind(EEghk[["K"]], AAghk[["K"]], upd.k))
-             res <- list(g=Cparms[['g']], h=h.new, K=K.new)
-             res <- .normalize.ghkParms(res)
-             res <- c(res, Cparms[-(1:3)])
-           },
-           "mixed"={
-             ## g update:
-             upd.g    <- scale * (EEghk[[g.idx]] - AAghk[[g.idx]])
-             g.new    <- tableOp2(Cparms[[g.idx]], upd.g, `+`, restore=TRUE)
-
-             ##cat("upd.g:\n"); print(t(round(cbind(EEghk[["g"]], AAghk[["g"]], upd.g),4)))
-             ## K update:
-             upd.k   <- scale * (EEghk[[K.idx]] - AAghk[[K.idx]])
-             K.new   <- Cparms[[K.idx]]
-
-
-             K.new[Ac.idx,Ac.idx] <- K.new[Ac.idx,Ac.idx] + upd.k
-             ##cat("upd.k:\n"); print(round(cbind(EEghk[["K"]], AAghk[["K"]], upd.k),4))
-             h.new   <- Cparms[[h.idx]]
-             upd.h   <- scale * (EEghk[[h.idx]]-AAghk[[h.idx]])
-
-             em       <- AAghk[['jia.mat']]
-             Cparms.h <- Cparms[['h']]
-             for (jj in 1:ncol(em))
-               h.new[Ac.idx,em[,jj]] <- Cparms.h[Ac.idx,em[,jj],drop=FALSE] + upd.h[,jj]
-             ##cat("upd.h:\n"); print(round(cbind(EEghk[['h']], AAghk[['h']], upd.h),4))
-             ##max.chg <- c(max(abs(upd.g)),max(abs(upd.h)),max(abs(upd.k)))
-             res <- list(g=g.new, h=h.new, K=K.new)
-             res <- .normalize.ghkParms(res)
-             res <- c(res[1:3], Cparms[-(1:3)])
-           })
+                 h.new   <- Cparms[['h']]
+                 upd.h   <- scale * (EEghk[['h']]-AAghk[['h']])
+                 for (jj in 1:ncol(h.new))
+                     h.new[Ac.idx,jj] <- Cparms[['h']][Ac.idx,jj,drop=FALSE] + upd.h
+                 
+                 upd.k   <- scale * (EEghk[["K"]] - AAghk[["K"]])
+                 K.new   <- Cparms[['K']]
+                 K.new[Ac.idx,Ac.idx] <- K.new[Ac.idx,Ac.idx] + upd.k
+                 ## cat("cont: upd.h:\n"); print(cbind(EEghk[['h']], AAghk[['h']], upd.h))
+                 ## cat("cont: upd.k:\n"); print(cbind(EEghk[["K"]], AAghk[["K"]], upd.k))
+                 res <- list(g=Cparms[['g']], h=h.new, K=K.new)
+                 res <- normalize.ghkParms(res)
+                 res <- c(res, Cparms[-(1:3)])
+             },
+             "mixed"={
+                 ## g update:
+                 upd.g    <- scale * (EEghk[[g.idx]] - AAghk[[g.idx]])
+                 g.new    <- tableOp2(Cparms[[g.idx]], upd.g, `+`, restore=TRUE)
+                 
+                 ##cat("upd.g:\n"); print(t(round(cbind(EEghk[["g"]], AAghk[["g"]], upd.g),4)))
+                 ## K update:
+                 upd.k   <- scale * (EEghk[[K.idx]] - AAghk[[K.idx]])
+                 K.new   <- Cparms[[K.idx]]
+                 
+                 
+                 K.new[Ac.idx,Ac.idx] <- K.new[Ac.idx,Ac.idx] + upd.k
+                 ##cat("upd.k:\n"); print(round(cbind(EEghk[["K"]], AAghk[["K"]], upd.k),4))
+                 h.new   <- Cparms[[h.idx]]
+                 upd.h   <- scale * (EEghk[[h.idx]]-AAghk[[h.idx]])
+                 
+                 em       <- AAghk[['jia.mat']]
+                 Cparms.h <- Cparms[['h']]
+                 for (jj in 1:ncol(em))
+                     h.new[Ac.idx,em[,jj]] <- Cparms.h[Ac.idx,em[,jj],drop=FALSE] + upd.h[,jj]
+                 ##cat("upd.h:\n"); print(round(cbind(EEghk[['h']], AAghk[['h']], upd.h),4))
+                 ##max.chg <- c(max(abs(upd.g)),max(abs(upd.h)),max(abs(upd.k)))
+                 res <- list(g=g.new, h=h.new, K=K.new)
+                 ##parms <<- res
+                 res <- normalize.ghkParms(res)
+                 res <- c(res[1:3], Cparms[-(1:3)])
+             })
   } else {
     .infoPrint(details, 5, cat(sprintf("Not updating generator\n")))
     res <- Cparms
-    #max.chg <- c(0,0,0)
   }
 
   if (details>=5){
     cat("POST UPDATE Cparms // Mparms:\n");
-    MM   <- ghk2pmsParms(Cparms)
+    MM   <- ghk2pmsParmsFUN(Cparms)
     MM$p <- MM$p*MM$N
-    RR   <- ghk2pmsParms(res)
+    RR   <- ghk2pmsParmsFUN(res)
     RR$p <- RR$p*RR$N
     print(rbind(.as.matrix(res), .as.matrix(RR)))
   }
   #res$max.chg <- max.chg
-  res
-}
 
+    #' cparms.old <<- Cparms
+    #' res.old <<- res
+
+    res
+}
 
 
 .mModel_logLpms <- function(CGstats, Mparms){
@@ -436,7 +461,7 @@ print.MIfit <- function(x,...){
 
 ##   cat("curr.Mparms:---------------\n "); print(curr.Mparms)
 ##   cat("prev.Mparms:---------------\n "); print(prev.Mparms)
-  
+
   if (curr.Mparms[['gentype']]=="discrete"){
     N   <- prev.Mparms[['N']]
     cp  <- curr.Mparms[['p']]
@@ -518,3 +543,24 @@ print.MIfit <- function(x,...){
   ##class(ans) <- c("pms","MIparms")
   return(ans)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

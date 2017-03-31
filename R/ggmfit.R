@@ -6,7 +6,43 @@
 ##
 ##############################################################
 
-
+#' @title Iterative proportional fitting of graphical Gaussian model
+#' 
+#' @description Fit graphical Gaussian model by iterative proportional fitting.
+#' 
+#' @details \code{ggmfit} is based on a C implementation.  \code{ggmfitr} is
+#'     implemented purely in R (and is provided mainly as a benchmark for the
+#'     C-version).
+#' 
+#' @aliases ggmfit ggmfitr
+#' @param S Empirical covariance matrix
+#' @param n.obs Number of observations
+#' @param glist Generating class for model (a list)
+#' @param start Initial value for concentration matrix
+#' @param eps Convergence criterion
+#' @param iter Maximum number of iterations
+#' @param details Controlling the amount of output.
+#' @param ... Optional arguments; currently not used
+#' @return A list with \item{lrt}{Likelihood ratio statistic (-2logL)}
+#'     \item{df}{Degrees of freedom} \item{logL}{log likelihood}
+#'     \item{K}{Estimated concentration matrix (inverse covariance matrix)}
+#' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
+#' @seealso \code{\link{cmod}}, \code{\link{loglin}}
+#' @keywords multivariate models
+#' @examples
+#' 
+#' ## Fitting "butterfly model" to mathmark data
+#' ## Notice that the output from the two fitting functions is not
+#' ## entirely identical.
+#' data(math)
+#' ddd <- cov.wt(math, method="ML")
+#' glist <- list(c("al","st","an"), c("me","ve","al"))
+#' ggmfit (ddd$cov, ddd$n.obs, glist)
+#' ggmfitr(ddd$cov, ddd$n.obs, glist)
+#' 
+#' 
+#' 
+#' @export ggmfit
 ggmfit <- function(S, n.obs, glist, start=NULL, 
                    eps=1e-12, iter=1000, details=0, ...)
 {
@@ -17,7 +53,7 @@ ggmfit <- function(S, n.obs, glist, start=NULL,
   data.vn    <- colnames(S)
 
   ## The used variables
-  usevar <- uniquePrim(unlist(glist))       
+  usevar <- unique.default(unlist(glist))       
 
   ## Check that the used variables are in S
   zzz <- match(usevar, data.vn)
