@@ -8,17 +8,16 @@ cmod(formula, data, marginal = NULL, fit = TRUE, details = 0)
 }
 \arguments{
 \item{formula}{Model specification in one of the following forms: 1) a
-right-hand sided formula, 2) as a list of generators, 3) an undirected
-graph (represented either as a graphNEL object or as an adjacency
-matrix).  Notice that there are certain model specification shortcuts,
-see Section 'details' below}
+right-hand sided formula, 2) as a list of generators.
+Notice that there are certain model specification shortcuts,
+see Section 'details' below.}
 
 \item{data}{Data in one of the following forms: 1) A dataframe or 2) a list
 with elements \code{cov} and \code{n.obs} (such as returned by the
 \code{cov.wt()} function.)}
 
 \item{marginal}{Should only a subset of the variables be used in connection
-with the model specification shortcuts}
+with the model specification shortcuts.}
 
 \item{fit}{Should the model be fitted.}
 
@@ -29,14 +28,14 @@ An object of class \code{cModel} (a list)
 }
 \description{
 Specification of graphical Gaussian model. The 'c' in the name
-    \code{cmod} refers to that it is a (graphical) model for 'c'ontinuous
-    variables
+\code{cmod} refers to that it is a (graphical) model for 'c'ontinuous
+variables
 }
 \details{
 The independence model can be specified as \code{~.^1} and the
-    saturated model as \code{~.^.}. The \code{marginal} argument can be used
-    for specifying the independence or saturated models for only a subset of
-    the variables.
+saturated model as \code{~.^.}. The \code{marginal} argument can be used
+for specifying the independence or saturated models for only a subset of
+the variables.
 }
 \examples{
 

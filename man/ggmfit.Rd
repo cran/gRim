@@ -5,8 +5,16 @@
 \alias{ggmfitr}
 \title{Iterative proportional fitting of graphical Gaussian model}
 \usage{
-ggmfit(S, n.obs, glist, start = NULL, eps = 1e-12, iter = 1000,
-  details = 0, ...)
+ggmfit(
+  S,
+  n.obs,
+  glist,
+  start = NULL,
+  eps = 1e-12,
+  iter = 1000,
+  details = 0,
+  ...
+)
 }
 \arguments{
 \item{S}{Empirical covariance matrix}
@@ -27,16 +35,16 @@ ggmfit(S, n.obs, glist, start = NULL, eps = 1e-12, iter = 1000,
 }
 \value{
 A list with \item{lrt}{Likelihood ratio statistic (-2logL)}
-    \item{df}{Degrees of freedom} \item{logL}{log likelihood}
-    \item{K}{Estimated concentration matrix (inverse covariance matrix)}
+\item{df}{Degrees of freedom} \item{logL}{log likelihood}
+\item{K}{Estimated concentration matrix (inverse covariance matrix)}
 }
 \description{
 Fit graphical Gaussian model by iterative proportional fitting.
 }
 \details{
 \code{ggmfit} is based on a C implementation.  \code{ggmfitr} is
-    implemented purely in R (and is provided mainly as a benchmark for the
-    C-version).
+implemented purely in R (and is provided mainly as a benchmark for the
+C-version).
 }
 \examples{
 
@@ -48,8 +56,6 @@ ddd <- cov.wt(math, method="ML")
 glist <- list(c("al","st","an"), c("me","ve","al"))
 ggmfit (ddd$cov, ddd$n.obs, glist)
 ggmfitr(ddd$cov, ddd$n.obs, glist)
-
-
 
 }
 \seealso{

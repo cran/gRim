@@ -30,7 +30,8 @@
 #' @examples
 #' 
 #' ### FIXME: To be written
-#' 
+
+
 #' @export mmod
 mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
   {
@@ -41,13 +42,14 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
     if (!is.null(marginal)) 
         marginal <- intersect(data.names, marginal)
     
-    flist <- .pFormula2(formula, data.names, marginal) 
+    flist <- parse_gm_formula(formula, data.names, marginal) 
     ##v.sep = ":", g.sep = "+", ignore.power.value = FALSE)
     glist <- flist$glist
     
 ### Extract the relevant columns of the dataframe. Discrete variables
 ### appear to the left of continuous variables
-    datainfo <- .MIdatainfo(flist$varNames, data)
+    datainfo <- .MIdatainfo(data, flist$varNames)
+
     .infoPrint(details, "mmod: .disc.names :", datainfo$disc.names, "\n")
     .infoPrint(details, "mmod: .cont.names :", datainfo$cont.names, "\n")
 
@@ -62,14 +64,8 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
     res[names(upd)] <- upd
     class(res) <- c("mModel","iModel")
 
-##    if (fit){
-##      res <- fit(res)      # use fit.dmod directly
-##    }
-##    #cat("time elapsed since start:", (proc.time()-t.start)[1],"\n")            
-##    res
-##
     if (fit) fit(res) else res
-  }
+}
 
 
 ## FIXME .glistNUM is goodie; put somewhere
@@ -91,14 +87,12 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
 
 
 .mModelinfo <- function(glist, datainfo){
-  .mModelinfoPrimitive(glist, datainfo$data.names, datainfo$disc.indic)
+    .mModelinfoPrimitive(glist, datainfo$data.names, datainfo$disc.indic)
 }
 
 ## Finds numeric representations of generators.
-.mModelinfoPrimitive <- function(glist, data.names, disc.indic){
 
-    #' cat(".mModelinfoPrimitive\n")
-    #' str(list(glist=glist, data.names=data.names, disc.indic=disc.indic))
+.mModelinfoPrimitive <- function(glist, data.names, disc.indic){
     
     len.glist     <- length( glist )
     n.disc.names  <- sum(disc.indic)
@@ -178,8 +172,8 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
 ### Takes the vn-columns of data only and organises so that
 ### discrete appear before continuous
 ### Stops if a vn does not appear in data.
-.MIdatainfo <- function(vn, dd)
-  {
+
+.MIdatainfo <- function(dd, vn){
     ##cat(".MIdatainfo\n")
     data.names <- names(dd)
     
@@ -187,7 +181,7 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
     if (any(is.na(zzz)))
       stop("variables: ", vn[is.na(zzz)], " are not in data\n")
         
-    disc.indic <- 1*!c(lapply(dd, is.numeric),recursive=TRUE)
+    disc.indic <- 1 * !c(lapply(dd, is.numeric), recursive=TRUE)
     used.indic <- rep.int(0, length(data.names))
     used.indic[zzz] <- 1
     
@@ -224,18 +218,20 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
          disc.indic=disc.indic2,
          n.disc.names = sum(disc.indic2),
          disc.levels=lev)    
-  }
+}
 
+
+#' @export
 coef.mModel <- coefficients.mModel <- function(object,type="ghk", ...){
-  type <- match.arg(type, c("ghk","pms"))
+  type <- match.arg(type, c("ghk", "pms"))
   val <- object$fitinfo$parms
   switch(type,
-         "pms"={val<-ghk2pmsParms_(val)}
+         "pms"={val <- parm_ghk2pms_(val)}
          )
   val
 }
 
-
+#' @export
 summary.mModel <- function(object, ...){
   .listprint <- function(z){
     for ( i  in 1:length(z)){
@@ -262,7 +258,7 @@ summary.mModel <- function(object, ...){
                 object$fitinfo$logL, 2*(object$fitinfo$logL-object$fitinfo$init.logL)))   
   }
     
-  return(invisible(object))
+  invisible(object)
 }
 
 

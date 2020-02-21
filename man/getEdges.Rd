@@ -12,8 +12,7 @@
 \alias{getOutEdgesMAT}
 \title{Find edges in a graph and edges not in an undirected graph.}
 \usage{
-getEdges(object, type = "unrestricted", ingraph = TRUE, discrete = NULL,
-  ...)
+getEdges(object, type = "unrestricted", ingraph = TRUE, discrete = NULL, ...)
 }
 \arguments{
 \item{object}{An object representing a graph; either a generator list, a
@@ -35,13 +34,13 @@ A p * 2 matrix with edges.
 }
 \description{
 Returns the edges of a graph (or edges not in a graph) where the
-    graph can be either a graphNEL object, a list of generators or an
-    adjacency matrix.
+graph can be either a graphNEL object, a list of generators or an
+adjacency matrix.
 }
 \details{
 When \code{ingraph=TRUE}: If type="decomposable" then
-    \code{getEdges()} returns those edges e for which the graph with e
-    removed is decomposable.
+\code{getEdges()} returns those edges e for which the graph with e
+removed is decomposable.
 
 When \code{ingraph=FALSE}: Likewise, if type="decomposable" then
 \code{getEdges()} returns those edges e for which the graph with e added is
@@ -58,7 +57,7 @@ Regarding the argument \code{discrete}, please see the documentation of
 }
 \note{
 These functions work on undirected graphs. The behaviour is
-    undocumented for directed graphs.
+undocumented for directed graphs.
 }
 \examples{
 
@@ -111,11 +110,10 @@ getEdges(UG, type="decomposable", discrete=c("a","b"))
 ## would create a forbidden path; a path with only continuous vertices
 ## between two discrete vertices.
 
-
 }
 \seealso{
 \code{\link{edgeList}}, \code{\link{nonEdgeList}},
-    \code{\link{mcsmarked}}
+\code{\link{mcsmarked}}
 }
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}

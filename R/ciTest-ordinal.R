@@ -8,6 +8,8 @@
 #'     say u and v, given a set of variables, say S. The deviance, Wilcoxon,
 #'     Kruskal-Wallis and Jonkheere-Terpstra tests are supported.  Asymptotic
 #'     and Monte Carlo p-values are computed.
+#'
+#' @name citest-ordinal
 #' 
 #' @details The deviance test is appropriate when u and v are nominal; Wilcoxon,
 #'     when u is binary and v is ordinal; Kruskal-Wallis, when u is nominal and
@@ -36,11 +38,11 @@
 #' data(dumping, package="gRbase")
 #' 
 #' ciTest_ordinal(dumping, c(2,1,3), stat="jt", N=1000)
-#' ciTest_ordinal(dumping, c("Operation","Symptom","Centre"), stat="jt", N=1000)
-#' ciTest_ordinal(dumping, ~ Operation + Symptom + Centre, stat="jt", N=1000)
+#' ciTest_ordinal(dumping, c("Operation", "Symptom", "Centre"), stat="jt", N=1000)
+#' ciTest_ordinal(dumping, ~Operation + Symptom + Centre, stat="jt", N=1000)
 #' 
 #' data(reinis)
-#' ciTest_ordinal(reinis, c(1,3,4:6),N=1000)
+#' ciTest_ordinal(reinis, c(1,3,4:6), N=1000)
 #' 
 #' # If data is a dataframe
 #' dd     <- as.data.frame(dumping)
@@ -53,52 +55,52 @@
 #' ciTest_ordinal(dumpDF, c(2,1,3), stat="jt", N=1000)
 #' ciTest_ordinal(dumpDF, c("Operation","Symptom","Centre"), stat="jt", N=1000)
 #' ciTest_ordinal(dumpDF, ~ Operation + Symptom + Centre, stat="jt", N=1000)
-#' 
-#' 
+
+
 #' @export ciTest_ordinal
 ciTest_ordinal <- function(x, set=NULL, statistic="dev", N=0, ...){
 
-  statistic <- match.arg(statistic, c("deviance","wilcoxon","kruskal","jt"))
-  if (inherits(x,"data.frame")){
-    dataNames <- names(x)  
-  } else {
-    if (inherits(x,"table")){
-      dataNames <- names(dimnames(x))
+    statistic <- match.arg(statistic, c("deviance","wilcoxon","kruskal","jt"))
+    if (inherits(x, "data.frame")){
+        dataNames <- names(x)  
     } else {
-      stop("'x' must be either a table or a dataframe")
+        if (inherits(x, "table")){
+            dataNames <- names(dimnames(x))
+        } else {
+            stop("'x' must be either a table or a dataframe")
+        }
     }
-  }
-  if (is.null(set)){
-    set <- dataNames
-    set.idx <- 1:length(set)
-  } else {
-    if (inherits(set,"numeric")){
-      set.idx <- set
-      set <- dataNames[set.idx]
-    } else
-    if (inherits(set,c("formula","character"))){
-      set <- unlist(rhsFormula2list(set))
-      set.idx <- match(set, dataNames)
+    if (is.null(set)){
+        set <- dataNames
+        set.idx <- 1:length(set)
+    } else {
+        if (inherits(set, "numeric")){
+            set.idx <- set
+            set <- dataNames[set.idx]
+        } else
+            if (inherits(set,c("formula", "character"))){
+                set <- unlist(rhsFormula2list(set))
+                set.idx <- match(set, dataNames)
+            }
     }
-  }
-
-  .CI.ordinal(set.idx, set, dataset=x, test=statistic, N=N)
-
+    
+    .CI.ordinal(set.idx, set, dataset=x, test=statistic, N=N)    
 }
 
 .CI.ordinal <- function(set.idx, set, dataset, test="deviance", N=0) {  
-
-  c1 <- set.idx[1]
-  c2 <- set.idx[2]
-  if (length(set.idx)>2)
-    S <- set.idx[-(1:2)]
-  else
-    S <- NULL
-  
+    
+    c1 <- set.idx[1]
+    c2 <- set.idx[2]
+    if (length(set.idx) > 2)
+        S <- set.idx[-(1:2)]
+    else
+        S <- NULL
+    
 #  cat(sprintf("CHK: c1: %s, c2: %s, S: %s test: %s\n", toString(c1), toString(c2), toString(S), test))
 #  print(class(dataset))
 #  str(dimnames(dataset))
-  ## Calculates the deviance, degrees of freedom and asymptotic P given an ftable (m).   
+
+## Calculates the deviance, degrees of freedom and asymptotic P given an ftable (m).   
   LRT <- function(m, d1, d2) {  
     oneslice <- function(t,d1,d2) {  
       dim(t) <- c(d1,d2)
@@ -335,48 +337,9 @@ ciTest_ordinal <- function(x, set=NULL, statistic="dev", N=0, ...){
   obs
 }
 
-##   if (test=="deviance")
-##     obs <- LRT(ft, d1, d2)
-##   else {
-##     if (test=="wilcoxon")
-##       obs <- wilcoxon(ft, d1, d2)
-##     else {
-##       if (test=="kruskal")
-##         obs <- kruskal(ft,d1,d2)
-##       else
-##         obs <- jt(ft,d1,d2)
-##     }
-##   }
 
-
-##   if (N>0){
-##     rcsums <- apply(ft, 1, rcsum, d1, d2)
-##     if (test=="deviance") {
-##       strata.stats <- apply(rcsums, 2, rdev, d1, d2, N) 
-##       mc.P <- sum(rowSums(strata.stats) >= obs$deviance)/N
-##       obs <- c(obs, montecarlo.P=mc.P)   
-##     } else {
-##       if  (test=="wilcoxon") {
-##         strata.stats <- apply(rcsums, 2, wdev, d1, d2, N)
-##         mc.P <- sum(abs(rowSums(strata.stats)-obs$EW) >= abs(obs$W-obs$EW))/N
-##         obs <- c(obs, montecarlo.P=mc.P)
-##       } else {
-##         if  (test=="kruskal") {
-##           strata.stats <- apply(rcsums, 2, kdev, d1, d2, N)
-##           mc.P <- sum((rowSums(strata.stats) >= obs$KW))/N
-##           obs <- c(obs, montecarlo.P=mc.P)
-##         } else {
-##           strata.stats <- apply(rcsums, 2, jtdev, d1, d2, N)
-##           mc.P <- sum((rowSums(strata.stats)-obs$EJT) >= abs(obs$JT-obs$EJT))/N 
-##           obs <- c(obs, montecarlo.P=mc.P)
-##         }}
-##     }
-##   }
-
-
-# Functions for calculating exact conditional independence tests for discrete data.
-# Presently supported: deviance and wilcoxon
-
+## Functions for calculating exact conditional independence tests for discrete data.
+## Presently supported: deviance and wilcoxon
 
 .CI.exact <- function(c1,c2, S=NULL, dataset, test="deviance", N=0) {
 
@@ -568,3 +531,45 @@ ciTest_ordinal <- function(x, set=NULL, statistic="dev", N=0, ...){
     }}
     }}
 }
+
+
+
+
+
+##   if (test=="deviance")
+##     obs <- LRT(ft, d1, d2)
+##   else {
+##     if (test=="wilcoxon")
+##       obs <- wilcoxon(ft, d1, d2)
+##     else {
+##       if (test=="kruskal")
+##         obs <- kruskal(ft,d1,d2)
+##       else
+##         obs <- jt(ft,d1,d2)
+##     }
+##   }
+
+
+##   if (N>0){
+##     rcsums <- apply(ft, 1, rcsum, d1, d2)
+##     if (test=="deviance") {
+##       strata.stats <- apply(rcsums, 2, rdev, d1, d2, N) 
+##       mc.P <- sum(rowSums(strata.stats) >= obs$deviance)/N
+##       obs <- c(obs, montecarlo.P=mc.P)   
+##     } else {
+##       if  (test=="wilcoxon") {
+##         strata.stats <- apply(rcsums, 2, wdev, d1, d2, N)
+##         mc.P <- sum(abs(rowSums(strata.stats)-obs$EW) >= abs(obs$W-obs$EW))/N
+##         obs <- c(obs, montecarlo.P=mc.P)
+##       } else {
+##         if  (test=="kruskal") {
+##           strata.stats <- apply(rcsums, 2, kdev, d1, d2, N)
+##           mc.P <- sum((rowSums(strata.stats) >= obs$KW))/N
+##           obs <- c(obs, montecarlo.P=mc.P)
+##         } else {
+##           strata.stats <- apply(rcsums, 2, jtdev, d1, d2, N)
+##           mc.P <- sum((rowSums(strata.stats)-obs$EJT) >= abs(obs$JT-obs$EJT))/N 
+##           obs <- c(obs, montecarlo.P=mc.P)
+##         }}
+##     }
+##   }

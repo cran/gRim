@@ -1,39 +1,39 @@
-##########################################################
-##
-## Discrete interaction model (log-linear model)
-##
-##########################################################
-
 ## FIXME: Delete df from loglin() output.
 
-#' @title Log--linear model
+##########################################################
+##
+#' @title Discrete interaction model (log-linear model)
 #'
+#' @description Specification of log--linear (graphical) model. The
+#'     'd' in the name \code{dmod} refers to that it is a (graphical)
+#'     model for 'd'iscrete variables
+#' 
 #' @name dmod
-#' 
-#' @description Specification of log--linear (graphical) model. The 'd' in the name
-#' \code{dmod} refers to that it is a (graphical) model for 'd'iscrete
-#' variables
-#' 
+##
+##########################################################
+
 #' @details The independence model can be specified as \code{~.^1} and the
 #'     saturated model as \code{~.^.}.  Setting e.g. \code{interactions=3}
 #'     implies that there will be at most three factor interactions in the
 #'     model.
 #' 
-#' Data can be specified as a table of counts or as a dataframe. If data is a
-#' dataframe then it will be converted to a table (using \code{xtabs()}). This
-#' means that if the dataframe contains numeric values then the you can get a
-#' very sparse and high dimensional table. When a dataframe contains numeric
-#' values it may be worthwhile to discretize data using the \code{cut()}
-#' function.
+#' Data can be specified as a table of counts or as a dataframe. If
+#' data is a dataframe then it will be converted to a table (using
+#' \code{xtabs()}). This means that if the dataframe contains numeric
+#' values then the you can get a very sparse and high dimensional
+#' table. When a dataframe contains numeric values it may be
+#' worthwhile to discretize data using the \code{cut()} function.
 #' 
-#' The \code{marginal} argument can be used for specifying the independence or
-#' saturated models for only a subset of the variables. When \code{marginal} is
-#' given the corresponding marginal table of data is formed and used in the
-#' analysis (notice that this is different from the behaviour of
-#' \code{loglin()} which uses the full table.
+#' The \code{marginal} argument can be used for specifying the
+#' independence or saturated models for only a subset of the
+#' variables. When \code{marginal} is given the corresponding marginal
+#' table of data is formed and used in the analysis (notice that this
+#' is different from the behaviour of \code{loglin()} which uses the
+#' full table.
 #' 
-#' The \code{triangulate()} method for discrete models (dModel objects) will
-#' for a model look at the dependence graph for the model.
+#' The \code{triangulate()} method for discrete models (dModel
+#' objects) will for a model look at the dependence graph for the
+#' model.
 #' 
 #' @aliases dmod print.dModel fitted.dModel residuals.dModel 
 #'     triangulate.dModel
@@ -51,6 +51,7 @@
 #' @param fit Should the model be fitted.
 #' @param details Control the amount of output; for debugging purposes.
 #' @param ... Additional arguments; currently no used.
+#'
 #' @return An object of class \code{dModel}.
 #'
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
@@ -66,54 +67,56 @@
 #' dm3 <- backward(dm1, k=2, fixin=list(c("family", "phys", "systol")))
 #' ## At most 3-factor interactions
 #' dm1<-dmod(~ .^., data=reinis, interactions=3)
-#' 
+
+
 #' @export dmod
-dmod <- function(formula, data, marginal=NULL, interactions=NULL, fit=TRUE, details=0){
+dmod <- function(formula, data, marginal=NULL, interactions=NULL, fit=TRUE, details=0, ...){
 
     if (!inherits(data, c("data.frame", "table")))
       stop("data must be either a dataframe or a table \n")
   
-  if (inherits(data, "data.frame")){
-      is_data.frame <- TRUE
-      varNames <- names(data)
-  } else {
-      is_data.frame <- FALSE
-      varNames <- names(dimnames(data))
-  }
-
-  if (length(marginal) > 0){
-      zzz  <- unlist(lapply(marginal, pmatch, varNames))
-      zzz  <- zzz[!is.na(zzz)]
-      marginal <- varNames[zzz]
-  }
-
-  ans <- .pFormula2(formula, varNames, marginal, interactions)
-
-  if (is_data.frame){
-      data <- xtabs(~., data=data[ans$varNames])
-  } else {
-    if (length(ans$varNames) != length(varNames)){
-        ## FIXME: Looks strange: as.table(tableMargin(data, ans$varNames))
-        data <- as.table(tableMargin(data, ans$varNames))
+    if (inherits(data, "data.frame")){
+        is_data.frame <- TRUE
+        varNames <- names(data)
+    } else {
+        is_data.frame <- FALSE
+        varNames <- names(dimnames(data))
     }
-  }
-  varNames     <- names(dimnames(data))
-
-  res <- list(
-      call = match.call(),
-      glist     = ans$glist,
-      varNames  = varNames,
-      datainfo  = list(data=data),
-      fitinfo   = NULL,
-      isFitted  = FALSE
-  )
-
-  upd <- .dModel_finalize(ans$glist, varNames)
-  res[names(upd)] <- upd
-
-  class(res) <- c("dModel","iModel")
-
-  if (fit) fit(res) else res
+    
+    if (length(marginal) > 0){
+        zzz  <- unlist(lapply(marginal, pmatch, varNames))
+        zzz  <- zzz[!is.na(zzz)]
+        marginal <- varNames[zzz]
+    }
+    
+    ans <- parse_gm_formula(formula, varNames, marginal, interactions)
+    
+    
+    if (is_data.frame){
+        data <- xtabs(~., data=data[ans$varNames])
+    } else {
+        if (length(ans$varNames) != length(varNames)){
+            ## FIXME: Looks strange: as.table(tabMarg(data, ans$varNames))
+            data <- as.table(tabMarg(data, ans$varNames))
+        }
+    }
+    varNames     <- names(dimnames(data))
+    
+    res <- list(
+        call = match.call(),
+        glist     = ans$glist,
+        varNames  = varNames,
+        datainfo  = list(data=data),
+        fitinfo   = NULL,
+        isFitted  = FALSE
+    )
+    
+    upd <- .dModel_finalize(ans$glist, varNames)
+    res[names(upd)] <- upd
+    
+    class(res) <- c("dModel", "iModel")
+    
+    if (fit) fit(res) else res
 }
 
 
@@ -128,6 +131,7 @@ dmod <- function(formula, data, marginal=NULL, interactions=NULL, fit=TRUE, deta
 }
 
 
+#' @export
 fitted.dModel <- function(object,...){
     if ( object$isFitted ){
         object$fitinfo$fit
@@ -139,6 +143,7 @@ fitted.dModel <- function(object,...){
 }
 
 
+#' @export
 fit.dModel <- function(object, engine="loglin", print=FALSE, ...){
 
   ## FIXME: At some point we should allow for data in the form of a dataframe
@@ -160,13 +165,13 @@ fit.dModel <- function(object, engine="loglin", print=FALSE, ...){
     
     if (getmi(object, "isDecomposable")){
         rr <- ripMAT(glist2adjMAT(getmi(object, "glist")))
-        dim.adj   <- .loglinDecDim(rr$cliques, rr$separators,
+        dim.adj   <- .dim_loglin_decomp(rr$cliques, rr$separators,
                                    tableinfo=getmi(object, "data"), adjust=TRUE)
-        dim.unadj <- .loglinDecDim(rr$cliques, rr$separators,
+        dim.unadj <- .dim_loglin_decomp(rr$cliques, rr$separators,
                                    tableinfo=getmi(object, "data"), adjust=FALSE)
     } else {
         dim.adj   <- NA
-        dim.unadj <- .loglinGenDim(glistNUM, dim(getmi(object, "data")))
+        dim.unadj <- .dim_loglin(glistNUM, dim(getmi(object, "data")))
     }
     
     df.adj       <- sat.dim.adj   - dim.adj
@@ -274,9 +279,9 @@ fit.dModel <- function(object, engine="loglin", print=FALSE, ...){
         ## For each marginal cell with positive counts, check if counts are > 5. If so, the chi2 is ok.
         sparsecode3 <- rep.int(0, length(glist))
         for (ii in 1:length(glist)){
-          tmC <- tableMargin(data, glist[[ii]])
-          tm0 <- tmC>0
-          tm5 <- tmC[tm0]>5
+          tmC <- tabMarg(data, glist[[ii]])
+          tm0 <- tmC > 0
+          tm5 <- tmC[tm0] > 5
           if (length(tm5) == length(tm0)){
             sparsecode3[ii] <- 1
           }
@@ -303,6 +308,7 @@ fit.dModel <- function(object, engine="loglin", print=FALSE, ...){
 
 
 
+#' @export
 residuals.dModel <-
     function (object, type = c("deviance", "pearson", "response"),
               ...)

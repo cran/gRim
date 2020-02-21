@@ -25,17 +25,16 @@ mmod(formula, data, marginal = NULL, fit = TRUE, details = 0)
 }
 \value{
 An object of class \code{mModel} and the more general class
-    \code{iModel}.
+\code{iModel}.
 }
 \description{
 A mixed interaction model is a model (often with conditional
-    independence restrictions) for a combination of discrete and continuous
-    variables.
+independence restrictions) for a combination of discrete and continuous
+variables.
 }
 \examples{
 
 ### FIXME: To be written
-
 }
 \seealso{
 \code{\link{dmod}} \code{\link{cmod}}
