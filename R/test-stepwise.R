@@ -1,12 +1,11 @@
-#########################################################################
-##
-## Backward and forward stepwise model selection for iModel's
-##
-#########################################################################
-
+############################################################################
+#'
 #' @title Stepwise model selection in (graphical) interaction models
 #'
-#' @description Stepwise model selection in (graphical) interaction models
+#' @description Stepwise model selection in (graphical) interaction
+#'     models
+#'
+############################################################################
 #'
 #' @name stepwise
 #'
@@ -66,7 +65,7 @@ stepwise.iModel <- function(object,
     criterion  <- match.arg(criterion, c("aic",        "test"))
     search     <- match.arg(search,    c("headlong",   "all"))
     
-    if (isGSD_glist(.glist(object))[2]){  ## FIXME .glist is ugly
+    if (isGSD_glist(.glist(object))[2]){  
         type <- match.arg(type,      c("decomposable", "unrestricted"))
     } else {
         type <- "unrestricted"
@@ -150,11 +149,14 @@ backward <- function(object, criterion="aic", alpha=NULL, type="decomposable", s
       statvec   <- testMAT[, crit.str]
       opt.idx   <- opt.op(statvec)
 
+      ## print(testMAT); print(opt.idx)
+      
       if (details>=2) print(testMAT, row.names=FALSE, digits=4)
       ##str(list(statvec=statvec, opt.idx=opt.idx))
       if (comp.op( statvec[opt.idx], alpha)) {
           ## update object
-          opt.edge <- as.character(testMAT[opt.idx, c("V1", "V2")])          
+          opt.edge <- as.character(testMAT[opt.idx, c("V1", "V2")])
+          ## print(opt.edge)
           object   <- update(object, list(drop.edge=opt.edge))
           if (details >= 1) cat(sprintf("  %s %9.4f Edge deleted: %s\n",
                                       outstring, statvec[opt.idx], .toString(opt.edge)))          
@@ -294,7 +296,7 @@ forward <- function(object, criterion="aic", alpha=NULL, type="decomposable", se
     if (!isg) c(isg = FALSE, issd = FALSE)
     else
         c(isg = TRUE,
-          issd = length(mcsmarkedMAT(amat, discrete = discrete)) > 0)
+          issd = length(mcs_markedMAT(amat, discrete = discrete)) > 0)
 } 
 
 

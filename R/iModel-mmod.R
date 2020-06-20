@@ -10,10 +10,10 @@
 #'     independence restrictions) for a combination of discrete and continuous
 #'     variables.
 #'
-#' @name mmod
+#' @name imodel-mmod
 #' 
 #' @aliases mmod coef.mModel coefficients.mModel print.mModel summary.mModel
-#' mmod_dimension
+#'      mmod_dimension
 #' 
 #' @param formula A right hand sided formula specifying the model.
 #' @param data Data (a dataframe)
@@ -25,7 +25,7 @@
 #' @return An object of class \code{mModel} and the more general class
 #'     \code{iModel}.
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
-#' @seealso \code{\link{dmod}} \code{\link{cmod}}
+#' @seealso \code{\link{dmod}}, \code{\link{cmod}}.
 #' @keywords models
 #' @examples
 #' 
@@ -43,7 +43,6 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
         marginal <- intersect(data.names, marginal)
     
     flist <- parse_gm_formula(formula, data.names, marginal) 
-    ##v.sep = ":", g.sep = "+", ignore.power.value = FALSE)
     glist <- flist$glist
     
 ### Extract the relevant columns of the dataframe. Discrete variables
@@ -61,16 +60,11 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
                 isFitted       = FALSE)
     
     upd <- .mModel_finalize(glist, varNames, datainfo)    
-    res[names(upd)] <- upd
+    res$modelinfo <- upd
+    #res[names(upd)] <- upd
     class(res) <- c("mModel","iModel")
 
     if (fit) fit(res) else res
-}
-
-
-## FIXME .glistNUM is goodie; put somewhere
-.glistNUM <- function(glist, varNames){
-    lapply(glist, function(l) match(l, varNames))
 }
 
 .mModel_finalize <- function(glist, varNames, datainfo){
@@ -78,11 +72,11 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
     zzz <- isGSD_glist(glist, discrete=datainfo$disc.names)
     glistNUM <- .glistNUM(glist, varNames)    
     modelinfo <- .mModelinfo(glist, datainfo)
-    
-    ret      <- list(glistNUM       = glistNUM,
-                     modelinfo      = modelinfo,
+
+    ret      <- list(glist = glist,
+                     glistNUM = glistNUM, 
                      properties     = zzz)
-    ret
+    c(ret, modelinfo)
 }
 
 
@@ -106,14 +100,14 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
 
     disc.idx       <- lin.idx       <- quad.idx       <- 1
     i <- 1
-    while ( i  <= len.glist){
+    while (i <= len.glist){
         gen.names             <- glist[[ i ]]
         gen.num               <- match(gen.names,data.names)
         glist.num[[ i ]]      <- gen.num 
-        glist.disc[[ i ]]     <- gen.names[disc.indic[gen.num]==1]
-        glist.cont[[ i ]]     <- gen.names[disc.indic[gen.num]==0]
-        glist.num.disc[[ i ]] <- gen.num[disc.indic[gen.num]==1]
-        glist.num.cont[[ i ]] <- gen.num[disc.indic[gen.num]==0] - n.disc.names
+        glist.disc[[ i ]]     <- gen.names[disc.indic[gen.num] == 1]
+        glist.cont[[ i ]]     <- gen.names[disc.indic[gen.num] == 0]
+        glist.num.disc[[ i ]] <- gen.num[disc.indic[gen.num] == 1]
+        glist.num.cont[[ i ]] <- gen.num[disc.indic[gen.num] == 0] - n.disc.names
         
         disc.num <- gen.num[gen.num <= n.disc.names]
         cont.num <- gen.num[gen.num >  n.disc.names]
@@ -136,7 +130,7 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
                    disc.idx <- disc.idx + 1
                    quad.gen.num[[quad.idx]]   <- cont.num
                    quad.gen.names[[quad.idx]] <- data.names[cont.num]
-                   quad.idx <- quad.idx + 1
+                   quad.idx  <- quad.idx + 1
                    lin.num   <- vector("list", length(cont.num))
                    lin.names <- vector("list", length(cont.num))
                    for (k in seq_along(cont.num)){
@@ -154,18 +148,17 @@ mmod <- function(formula, data, marginal=NULL, fit=TRUE, details=0)
     lin.gen.num   <- unlist(lin.gen.num,   recursive=FALSE)
     lin.gen.names <- unlist(lin.gen.names, recursive=FALSE)
     
-    dlq <- list(discrete  = removeRedundant( disc.gen.names ), 
-                linear    = removeRedundant( lin.gen.names  ),  
-                quadratic = removeRedundant( quad.gen.names ))  
+    dlq <- list(discrete  = remove_redundant( disc.gen.names ), 
+                linear    = remove_redundant( lin.gen.names  ),  
+                quadratic = remove_redundant( quad.gen.names ))  
     
-    ans <- list(glist.num      = glist.num,
-                glist.disc     = glist.disc,
-                glist.cont     = glist.cont,
-                glist.num.disc = glist.num.disc,
-                glist.num.cont = glist.num.cont,              
-                dlq=dlq)
-    
-    return(ans)
+    ans <- list(
+        dlq            = dlq,
+        glist.disc     = glist.disc,
+        glist.cont     = glist.cont,
+        glist.num.disc = glist.num.disc,
+        glist.num.cont = glist.num.cont)    
+    ans
 }
 
 
@@ -262,13 +255,9 @@ summary.mModel <- function(object, ...){
 }
 
 
-
-
-
-
-
-
-
-
+## FIXME .glistNUM is goodie; put somewhere
+.glistNUM <- function(glist, varNames){
+    lapply(glist, function(l) match(l, varNames))
+}
 
 

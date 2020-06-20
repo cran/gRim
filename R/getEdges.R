@@ -42,7 +42,7 @@
 #' these work on adjacency matrices.
 #' 
 #' Regarding the argument \code{discrete}, please see the documentation of
-#' \code{\link[gRbase]{mcsmarked}}.
+#' \code{\link[gRbase:graph-mcs]{mcs_marked}}.
 #' 
 #' @aliases getEdges getEdges.list getEdges.graphNEL getEdges.matrix getInEdges
 #'     getOutEdges getEdgesMAT getInEdgesMAT getOutEdgesMAT
@@ -60,8 +60,7 @@
 #' @note These functions work on undirected graphs. The behaviour is
 #'     undocumented for directed graphs.
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
-#' @seealso \code{\link{edgeList}}, \code{\link{nonEdgeList}},
-#'     \code{\link{mcsmarked}}
+#' @seealso \code{\link{edgeList}}, \code{\link{nonEdgeList}}.
 #' @keywords utilities
 #' @examples
 #' 
@@ -71,29 +70,29 @@
 #' 
 #' #### On a glist
 #' getEdges(glist)
-#' getEdges(glist,type="decomposable")
+#' getEdges(glist, type="decomposable")
 #' # Deleting (a,d) would create a 4-cycle
 #' 
 #' getEdges(glist, ingraph=FALSE)
-#' getEdges(glist,type="decomposable", ingraph=FALSE)
+#' getEdges(glist, type="decomposable", ingraph=FALSE)
 #' # Adding (e,b) would create a 4-cycle
 #' 
 #' #### On a graphNEL
 #' getEdges(gg)
-#' getEdges(gg,type="decomposable")
+#' getEdges(gg, type="decomposable")
 #' # Deleting (a,d) would create a 4-cycle
 #' 
 #' getEdges(gg, ingraph=FALSE)
-#' getEdges(gg,type="decomposable", ingraph=FALSE)
+#' getEdges(gg, type="decomposable", ingraph=FALSE)
 #' # Adding (e,b) would create a 4-cycle
 #' 
 #' #### On an adjacency matrix
 #' getEdges(adjmat)
-#' getEdges(adjmat,type="decomposable")
+#' getEdges(adjmat, type="decomposable")
 #' # Deleting (a,d) would create a 4-cycle
 #' 
 #' getEdges(adjmat, ingraph=FALSE)
-#' getEdges(adjmat,type="decomposable", ingraph=FALSE)
+#' getEdges(adjmat, type="decomposable", ingraph=FALSE)
 #' # Adding (e,b) would create a 4-cycle
 #' 
 #' 
@@ -168,7 +167,7 @@ getInEdgesMAT <- function(adjmat, type="unrestricted", discrete=NULL, ...){
       for (ii in seq_len(nrow(emat))){
         ed <- emat[ii, ] 
         adjmat[ed[1], ed[2]] <- adjmat[ed[2], ed[1]] <- 0L
-        idx[ii] <- length(mcsmarkedMAT(adjmat, discrete=discrete)) > 0
+        idx[ii] <- length(mcs_markedMAT(adjmat, discrete=discrete)) > 0
         adjmat[ed[1], ed[2]] <- adjmat[ed[2], ed[1]] <- 1L
       }
       emat <- emat[idx, , drop=FALSE]
@@ -184,7 +183,7 @@ getOutEdgesMAT <- function(adjmat, type="unrestricted", discrete=NULL, ...){
         for (ii in seq_len(nrow(emat))){
             ed <- emat[ii,]
             adjmat[ed[1], ed[2]] <- adjmat[ed[2], ed[1]] <- 1L
-            idx[ii] <- length(mcsmarkedMAT(adjmat, discrete=discrete)) > 0
+            idx[ii] <- length(mcs_markedMAT(adjmat, discrete=discrete)) > 0
             adjmat[ed[1], ed[2]] <- adjmat[ed[2], ed[1]] <- 0L
         }
         emat <- emat[idx, , drop=FALSE]

@@ -26,7 +26,7 @@ weakMarginalModel<- function(Mparms, disc=NULL,cont=NULL, type="pms", details=2)
 ###
 .weak.modelmarg.disc <- function(Mparms, Ad.idx, details=2){
 
-  .infoPrint(details,2, "Finding weak marginal (model-discrete):  Ad.idx: ", Ad.idx, "\n")
+  .infoPrint(details,15, "Finding weak marginal (model-discrete):  Ad.idx: ", Ad.idx, "\n")
 
   p.A <- tabMarg(Mparms$p, Ad.idx)
   res <- list(p=p.A, mu=NULL, Sigma=NULL, gentype="discrete",  
@@ -71,12 +71,12 @@ weakMarginalModel<- function(Mparms, disc=NULL,cont=NULL, type="pms", details=2)
 #  .infoPrint(details, 1, "flevels:",flevels, "ia:",ia, "A.levels:", A.levels, "\n")
   
   for (ii in 1:A.dim){
-    jia            <- slice2entry(ia, Ad.idx, flevels)
+    jia            <- slice2entry(ia, Ad.idx, flevels)  ## FIXME Old slice2entry. Is there a modern version?
     jia.mat[,ii]   <- jia
     p.jia          <- ppp[jia]
                                         #    cat(sprintf("ia: %s, jia: %s\n", .toString(ia), .toString(jia)))
     mu.j           <- mu.tmp[,jia,drop=FALSE]
-    mu.iA2         <- rowSumsPrim(.colmult(p.jia, mu.j))/sum(p.jia)
+    mu.iA2         <- rowSumsPrim(.colmult(p.jia, mu.j)) / sum(p.jia)
     mu.dif2        <- mu.j - mu.iA2
     quad2          <- .vMMt(p.jia, mu.dif2) #.colmult(p.j, mu.dif) %*% t(mu.dif)
     QQ             <- QQ + quad2 

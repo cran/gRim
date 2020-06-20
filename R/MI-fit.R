@@ -9,7 +9,7 @@
 ###
 #######################################################################
 
-fit.mModel <- function(object, method="general", details=0, eps.parm=1e-6, maxit=100, ...){
+fit.mModel <- function(object, method="general", details=0, eps.parm=1e-10, maxit=100, ...){
   method <- match.arg(method, c("general", "stephalving"))
 
   ## cat("fit.mModel - entry\n")
@@ -17,20 +17,21 @@ fit.mModel <- function(object, method="general", details=0, eps.parm=1e-6, maxit
   cg <- getmi(object, "cgstats")
   
   ans           <- .fitmModel(object, method=method, details=details, eps.parm=eps.parm, maxit=maxit, ...)
+  
   ans$dimension <- .mmod_dimension(object$modelinfo$dlq, object$datainfo)
 
   ## Saturated model
   n.obs <- cg$n.obs
   NN    <- cg$N
   qq    <- length(cg$cont.names)
-  SS    <- cg$SSD/NN
-  logL.sat <- sum(n.obs*log(n.obs/NN)) - NN*qq/2 * log(2*pi) - NN/2 * log(det(SS)) - NN*qq/2
+  SS    <- cg$SSD / NN
+  logL.sat <- sum(n.obs * log(n.obs/NN)) - NN * qq/2 * log(2*pi) - NN/2 * log(det(SS)) - NN * qq/2
 
   ## Independence model
   i.model    <- loglin(n.obs, as.list(seq_along(dim(n.obs))),iter=1, print=FALSE, fit=TRUE)
   grand.mean <- rowSumsPrim(colwiseProd(n.obs/NN, cg$center))
   SS.ind     <- (cg$SS - NN*grand.mean %*% t(grand.mean))/NN
-  logL.ind   <- sum(n.obs*log(i.model$fit/NN))- NN*qq/2 * log(2*pi) - NN/2 * sum(log(diag(SS.ind))) - NN*qq/2
+  logL.ind   <- sum(n.obs * log(i.model$fit / NN))- NN * qq / 2 * log(2 * pi) - NN / 2 * sum(log(diag(SS.ind))) - NN * qq / 2
 
   ans$ideviance <- ans$logL - logL.ind
   ans$dev       <- logL.sat - ans$logL
@@ -42,10 +43,18 @@ fit.mModel <- function(object, method="general", details=0, eps.parm=1e-6, maxit
   return(object)
 }
 
-.fitmModel <- function(object, method="general", details=0, eps.parm=1e-6, eps.logL=1e-6, maxit=100, ...){
+
+print.MIfit <- function(x,...){
+  ##cat("MIfit:\n")
+  cat(sprintf("components: %s \n", toString(names(x))))
+  print(x[c("parms","logL","init.logL","dimension")])
+  return(invisible(x))
+}
+
+
+.fitmModel <- function(object, method="general", details=0, eps.parm=1e-10, eps.logL=1e-10, maxit=100, ...){
 
     ## cat(".fitmModel\n")
-    ## print(object$datainfo$CGstats)
     
 ### Generate initial parameter value
 ###
@@ -63,21 +72,12 @@ fit.mModel <- function(object, method="general", details=0, eps.parm=1e-6, maxit
     WMDghk <- .getWeakMarginalDataList(getmi(object, "cgstats"),
                                        Ad.list, Ac.list, type="ghk", details=details)
 
-
-    ## print("UUUUUUUUUUUUUUUUUUUU"); print(object$datainfo$CGstats)
-    ## print("WMDghk"); print(WMDghk)
-
-    ##WMDpms <- lapply(WMDghk, ghk2pmsParms)
-
     ## The new version of ghk2pmsParms_ is really a timesaver here
     WMDpms <- lapply(WMDghk, parm_ghk2pms_)
-
-    ## print("WMDpms"); print(WMDpms)
-    ## print("UUUUUUUUUUUUUUUUUUUU"); print(object$datainfo$CGstats)
     
 ### Iterate to maximize logL
 ###
-    .infoPrint(details,1, "fit.mModel: Calling .mModel_iterate\n")
+    .infoPrint(details, 2, "fit.mModel: Calling .mModel_iterate\n")
     ans <- .mModel_iterate(Mparms, Cparms, Ad.list, Ac.list,
                            WMDghk, WMDpms, getmi(object, "cgstats"), 
                            method, eps.parm, eps.logL, maxit, details)
@@ -86,16 +86,6 @@ fit.mModel <- function(object, method="general", details=0, eps.parm=1e-6, maxit
     ans$init.parms  <- Mparms
     class(ans)      <- "MIfit"
     ans
-}
-
-
-
-
-print.MIfit <- function(x,...){
-  ##cat("MIfit:\n")
-  cat(sprintf("components: %s \n", toString(names(x))))
-  print(x[c("parms","logL","init.logL","dimension")])
-  return(invisible(x))
 }
 
 
@@ -108,11 +98,15 @@ print.MIfit <- function(x,...){
 ###
 ########################################################################
 
-.mModel_iterate <- function(Mparms, Cparms, Ad.list, Ac.list,
-                       WMDghk, WMDpms, CGstats,
-                       method,
-                       eps.parm=1.0e-4, eps.logL=1e-6, maxit=100, details=1){
+## .logLdiff <- function(curr, prev){
+##     (curr - prev) / -prev
+## }
 
+.mModel_iterate <- function(Mparms, Cparms, Ad.list, Ac.list,
+                            WMDghk, WMDpms, CGstats,
+                            method,
+                            eps.parm=1.0e-4, eps.logL=1e-6, maxit=100, details=1){
+    
   prev.Mparms <- Mparms
   init.logL   <- prev.logL <- .mModel_logLpms(CGstats, Mparms)
 
@@ -151,7 +145,7 @@ print.MIfit <- function(x,...){
                       break()
                   }
               }
-          }
+          } ## if ()
           
           Mparms      <- zzz$Mparms
           Cparms      <- zzz$Cparms
@@ -177,46 +171,42 @@ print.MIfit <- function(x,...){
                        WMDghk, WMDpms, CGstats, scale,
                        method, logL, itcount, details){
 
-  .infoPrint(details,4, "calling outerloop\n")
-
-  prev.Mparms <- Mparms
-  prev.logL   <- logL
-  logL.fail   <- 0
-
-  ##pmp.old <<- Mparms
+    .infoPrint(details,4, "calling outerloop\n")
+    
+    prev.Mparms <- Mparms
+    prev.logL   <- logL
+    logL.fail   <- 0
   
-  if (method=="general")
-    .innerloop <- .standard.innerloop
-  else
-    .innerloop <- .stephalving.innerloop
+    .innerloop <- if (method=="general") .standard.innerloop
+                  else .stephalving.innerloop
 
-  for (ii in seq_along( Ad.list )){
-    Ad.idx    <- Ad.list[[ii]]
-    Ac.idx    <- Ac.list[[ii]]
-    EEghk     <- WMDghk[[ii]]
-    EEpms     <- WMDpms[[ii]]
-    AApms     <- weakMarginalModel(Mparms, disc=Ad.idx, cont=Ac.idx, type="pms", details=details)
-    AAghk     <- parm_pms2ghk(AApms)
-    zzz       <- .innerloop(Mparms, Cparms, Ad.idx, Ac.idx,
-                            EEghk, EEpms, AAghk, AApms, CGstats, scale, prev.logL, details)
-    Mparms    <- zzz$Mparms
-    Cparms    <- zzz$Cparms
-    curr.logL <- zzz$curr.logL
-    logL.fail <- logL.fail + zzz$logL.fail
-  }
-
-  
-  curr.logL <- .mModel_logLpms(CGstats,Mparms)
-  d.logL    <- curr.logL - prev.logL
-  d.parms   <- .mModel_parmdiff(Mparms, prev.Mparms)
-
-  .infoPrint(details,3,
-             cat(sprintf("outerloop (%2d): logL %16.10f, d.logL: %16.10f d.parms: %16.10f logL.fail: %f\n",
-                         itcount, curr.logL, d.logL, d.parms, logL.fail)))
-
-  list(Mparms=Mparms, Cparms=Cparms, logL=curr.logL, d.logL=d.logL, logL.fail=logL.fail, d.parms=d.parms)
+    for (ii in seq_along( Ad.list )){
+        Ad.idx    <- Ad.list[[ii]]
+        Ac.idx    <- Ac.list[[ii]]
+        EEghk     <- WMDghk[[ii]]
+        EEpms     <- WMDpms[[ii]]
+        AApms     <- weakMarginalModel(Mparms, disc=Ad.idx, cont=Ac.idx, type="pms", details=details)
+        AAghk     <- parm_pms2ghk(AApms)
+        zzz       <- .innerloop(Mparms, Cparms, Ad.idx, Ac.idx,
+                                EEghk, EEpms, AAghk, AApms, CGstats, scale, prev.logL, details)
+        Mparms    <- zzz$Mparms
+        Cparms    <- zzz$Cparms
+        curr.logL <- zzz$curr.logL
+        logL.fail <- logL.fail + zzz$logL.fail
+    }
+    
+    curr.logL <- .mModel_logLpms(CGstats,Mparms)
+    d.logL    <- curr.logL - prev.logL
+                                        #d.logL    <- (curr.logL - prev.logL) / -prev.logL ## FIXME NEW
+    
+    d.parms   <- .mModel_parmdiff(Mparms, prev.Mparms)
+    
+    .infoPrint(details,10,
+               cat(sprintf("outer(%3d): logL %16.10f, d.logL: %16.10f d.parms: %8.6f logL.fail: %f\n",
+                           itcount, curr.logL, d.logL, d.parms, logL.fail)))
+    
+    list(Mparms=Mparms, Cparms=Cparms, logL=curr.logL, d.logL=d.logL, logL.fail=logL.fail, d.parms=d.parms)
 }
-
 
 
 .standard.innerloop <- function(Mparms, Cparms, Ad.idx, Ac.idx,
@@ -225,21 +215,22 @@ print.MIfit <- function(x,...){
   new.Cparms <- .update.ghkParms(Cparms, Ad.idx, Ac.idx,
                                  EEghk, EEpms, AAghk, AApms, scale, CGstats, details=details)
 
-  ##ncp.old <<- new.Cparms
-  ##new.Mparms <- ghk2pmsParms(new.Cparms)
   new.Mparms <- parm_ghk2pms_(new.Cparms) 
 
   curr.logL  <- d.logL <- d.parms <- NA
   logL.fail  <- as.numeric(d.logL < 0)
 
-  .infoPrint(details,4,
-             cat(sprintf(".std.innerloop(%4.2f): AA=%10s,  curr.logL=%16.10f -2logL=%16.10f d.logL=%16.10f d.parms=%8.6f \n",
-                         scale, .toString(c("{",Ad.idx,"|", Ac.idx,"}")), curr.logL, -2*curr.logL, d.logL,
+  .infoPrint(details, 5,
+             cat(sprintf(".std(%4.2f): G=%10s,  curr.logL=%16.10f d.logL=%16.10f d.parms=%8.6f \n",
+                         scale,
+                         ##.toString(c("{",Ad.idx,"|", Ac.idx,"}")),
+                         print_generator(Ad.idx, Ac.idx),
+                         curr.logL, d.logL,
                          d.parms)))
 
-  ans <- list(Mparms=new.Mparms, Cparms=new.Cparms, curr.logL=curr.logL, d.logL=d.logL, logL.fail=logL.fail,
-              maxinner.code=NA, step.code=NA)
-
+    ans <- list(Mparms=new.Mparms, Cparms=new.Cparms, curr.logL=curr.logL,
+                d.logL=d.logL, logL.fail=logL.fail,
+                maxinner.code=NA, step.code=NA)
 }
 
 
@@ -264,41 +255,43 @@ print.MIfit <- function(x,...){
   repeat{
     new.Cparms <- .update.ghkParms(good.Cparms, Ad.idx, Ac.idx,
                                    EEghk, EEpms, AAghk, AApms, scale, CGstats, details=details)
-    ##new.Mparms <- ghk2pmsParms(new.Cparms)
     new.Mparms <- parm_ghk2pms_(new.Cparms)
     
     curr.logL  <- .mModel_logLpms(CGstats, new.Mparms)
-    d.logL     <- curr.logL - prev.logL
+    d.logL     <- (curr.logL - prev.logL) / -prev.logL ## FIXME NEW
     d.parms    <- .mModel_parmdiff(new.Mparms, prev.Mparms)
     min.eigen  <- min(eigen(new.Mparms$Sigma)$values)
 
-    .infoPrint(details,1,
-               cat(sprintf(".steph.innerloop(%4.2f): AA=%10s,  curr.logL=%16.10f -2logL=%16.10f d.logL=%16.10f d.parms=%8.6f \n",
-                           scale, .toString(c("{",Ad.idx,"|", Ac.idx,"}")), curr.logL, -2*curr.logL, d.logL,
+    .infoPrint(details,3,
+               cat(sprintf(".steph(%4.2f): G=%8s,  curr.logL=%16.10f  d.logL=%16.10f d.parms=%8.6f \n",
+                           scale,
+                           print_generator(Ad.idx, Ac.idx),
+                           curr.logL, d.logL,
                            d.parms)))
 
-    if ((d.logL<neg.eps | min.eigen<0) & innercount < maxinner){
+    if ((d.logL < neg.eps | min.eigen < 0) & innercount < maxinner){
       scale       <- scale / 2
       innercount  <- innercount + 1
       step.code   <- 1
     } else {
-      if (innercount==maxinner){
-        Cparms    <- good.Cparms
-        Mparms    <- good.Mparms
-        curr.logL <- .mModel_logLpms(CGstats, Mparms)
-        maxinner.code <- 1
-        .infoPrint(details, 4, cat(sprintf("stephalving failed; restoring original parameters; logL: %10.4f\n", curr.logL)))
+      if (innercount == maxinner){
+          Cparms    <- good.Cparms
+          Mparms    <- good.Mparms
+          curr.logL <- .mModel_logLpms(CGstats, Mparms)
+          maxinner.code <- 1
+          .infoPrint(details, 2, cat(sprintf("stephalving failed; restoring original parameters; logL: %10.4f\n", curr.logL)))
       } else {
-        Cparms  <- new.Cparms
-        Mparms  <- new.Mparms
+          Cparms  <- new.Cparms
+          Mparms  <- new.Mparms
       }
       break
     }
   }
-
+    
   logL.fail <- as.numeric(d.logL < 0)
-  ans <- list(Mparms=Mparms, Cparms=Cparms, curr.logL=curr.logL, d.logL=d.logL, logL.fail=logL.fail,
-              maxinner.code=maxinner.code, step.code=step.code)
+    ans <- list(Mparms=Mparms, Cparms=Cparms, curr.logL=curr.logL,
+                d.logL=d.logL, logL.fail=logL.fail,
+                maxinner.code=maxinner.code, step.code=step.code)
   return(ans)
 }
 
@@ -391,9 +384,9 @@ print.MIfit <- function(x,...){
              "continuous"={
 
                  h.new   <- Cparms[['h']]
-                 upd.h   <- scale * (EEghk[['h']]-AAghk[['h']])
+                 upd.h   <- scale * (EEghk[['h']] - AAghk[['h']])
                  for (jj in 1:ncol(h.new))
-                     h.new[Ac.idx,jj] <- Cparms[['h']][Ac.idx,jj,drop=FALSE] + upd.h
+                     h.new[Ac.idx,jj] <- Cparms[['h']][Ac.idx, jj, drop=FALSE] + upd.h
                  
                  upd.k   <- scale * (EEghk[["K"]] - AAghk[["K"]])
                  K.new   <- Cparms[['K']]
@@ -407,7 +400,7 @@ print.MIfit <- function(x,...){
              "mixed"={
                  ## g update:
                  upd.g    <- scale * (EEghk[[g.idx]] - AAghk[[g.idx]])
-                 g.new    <- tableOp2(Cparms[[g.idx]], upd.g, `+`, restore=TRUE)
+                 g.new    <- tableOp2(Cparms[[g.idx]], upd.g, `+`, restore=TRUE) ## FIXME : Uses tableOp2
                  
                  ##cat("upd.g:\n"); print(t(round(cbind(EEghk[["g"]], AAghk[["g"]], upd.g),4)))
                  ## K update:
@@ -567,6 +560,13 @@ print.MIfit <- function(x,...){
 
 
 
+print_generator <- function(a, b){
+    paste0("{",
+           paste0(a, collapse=','),
+           "|",
+           paste0(b, collapse=','),
+           "}")
+}
 
 
 

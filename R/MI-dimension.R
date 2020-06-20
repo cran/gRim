@@ -1,3 +1,4 @@
+## FIXME: mi_dimension: Several fragile components
 mmod_dimension <- function(object){
   .mmod_dimension(object$modelinfo$dlq, object$datainfo)
 }
@@ -27,7 +28,7 @@ mmod_dimension <- function(object){
   
   ## linear dimension
   ## ----------------
-  if (length(lll)==0){
+  if (length(lll) == 0){
     lin.dim <- n.cont
   } else {
     lin.dim <- 0
@@ -77,10 +78,56 @@ mmod_dimension <- function(object){
   
   ## independence model dimension
   ## ----------------------------
-  i.dim <- sum(disc.dim - 1) + 2*n.cont
+  i.dim <- sum(disc.dim - 1) + 2 * n.cont
   
-  c(mod.dim=mod.dim, sat.dim=sat.dim, i.dim=i.dim, df=sat.dim-mod.dim, idf=mod.dim-i.dim)
+  c(mod.dim=mod.dim, sat.dim=sat.dim, i.dim=i.dim, df=sat.dim - mod.dim, idf=mod.dim - i.dim)
 }
+
+
+## FIXME: Is loglinDim already in gRbase
+.loglinDim <- function(glistNUM, dtab){
+
+    .subsets <- function(x) {
+        y <- list(vector(mode(x), length = 0))
+        for (i in seq_along(x)) {
+            y <- c(y, lapply(y, "c", x[i]))
+        }
+        y[-1]
+    }
+    
+    max.g.size <- max(unlistPrim(lapply(glistNUM, length)))
+    ##max.g.size <- 1000
+    ## cat("max.g.size:", max.g.size, "\n")
+    
+    if (max.g.size < 10)
+    {
+        zz    <- unlist(lapply(glistNUM, .subsets), recursive=FALSE)
+        unzz  <- unique.default(zz)
+    }
+    else 
+    {
+        unzz     <- .subsets(glistNUM[[1]])
+        base.idx <- unlistPrim(lapply(unzz, function(terms) sum(2^(terms - 1)) ))  
+        if (length(glistNUM) > 1){
+            for (ii in 2:length(glistNUM)){
+                tmp      <- .subsets(glistNUM[[ii]])
+                tmp.idx  <- unlistPrim(lapply(tmp, function(terms) sum(2^(terms - 1)) ))    
+                unzz     <- c(unzz,tmp[!(tmp.idx %in% base.idx)])
+                base.idx <- c(base.idx, tmp.idx[!(tmp.idx %in% base.idx)])
+            }
+        }
+    }
+    
+    ans <- 0
+    for (jj in 1:length(unzz))
+        ans <- ans + prod(dtab[unzz[[jj]]]-1)
+    
+    ans
+}
+
+
+
+
 
 
 ##       browser()
@@ -99,52 +146,6 @@ mmod_dimension <- function(object){
 ##           zzz     <- .loglinDim(aaa.num, disc.dim) + 1
 ##         }
 ##       }
-
-
-
-.loglinDim <- function(glistNUM, dtab){
-
-  #print(glistNUM); print (dtab)
-  .subsets <- function(x) {
-    y <- list(vector(mode(x), length = 0))
-    for (i in seq_along(x)) {
-      y <- c(y, lapply(y, "c", x[i]))
-    }
-    y[-1]
-  }
-
-  max.g.size <- max(unlistPrim(lapply(glistNUM, length)))
-  #max.g.size <- 1000
-  ## cat("max.g.size:", max.g.size, "\n")
-
-  if (max.g.size < 10)
-    {
-      zz    <- unlist(lapply(glistNUM, .subsets), recursive=FALSE)
-      unzz  <- unique.default(zz)
-    }
-  else 
-    {
-      unzz     <- .subsets(glistNUM[[1]])
-      base.idx <- unlistPrim(lapply(unzz, function(terms) sum(2^(terms - 1)) ))  
-      if (length(glistNUM)>1){
-        for (ii in 2:length(glistNUM)){
-          tmp      <- .subsets(glistNUM[[ii]])
-          tmp.idx  <- unlistPrim(lapply(tmp, function(terms) sum(2^(terms - 1)) ))    
-          unzz     <- c(unzz,tmp[!(tmp.idx %in% base.idx)])
-          base.idx <- c(base.idx, tmp.idx[!(tmp.idx %in% base.idx)])
-        }
-      }
-    }
-
-  ans <- 0
-  for (jj in 1:length(unzz))
-    ans <- ans + prod(dtab[unzz[[jj]]]-1)
-
-  ans
-}
-
-
-
 
 ## MIdimension <- function(object){
 

@@ -75,7 +75,7 @@ parm_phk2ghk <- function(parms){
            quad   <- colSumsPrim(hh * mu)
 
            gg     <- log(parms[["p"]]) + (- log(detSig) - Q*log(2*pi) - quad) / 2
-           res    <-list(g=gg, h=hh, K=KK, gentype="mixed")
+           res    <- list(g=gg, h=hh, K=KK, gentype="mixed")
          },
          "continuous"={
            KK     <- parms[["K"]]           
@@ -124,16 +124,16 @@ parm_ghk2phk <- function(parms){
   switch(parms[['gentype']],
          "discrete"={
            zzz <- parms[['g']]
-           pp  <- exp(zzz-mean.default(zzz)) 
-           res <- list(p=pp/sum(pp), mu=NULL, Sigma=NULL, gentype="discrete")
+           pp  <- exp(zzz - mean.default(zzz)) 
+           res <- list(p=pp / sum(pp), mu=NULL, Sigma=NULL, gentype="discrete")
          },
          "mixed"={
            Sigma     <- solveSPD(parms[['K']])
            hh        <- parms[['h']]
            mu        <- Sigma %*% hh # Kinv %*% h
            g.quad    <- parms[['g']] + colSumsPrim(hh * mu)/2
-           pp        <- exp( g.quad - mean.default(g.quad))           
-           res       <- list(p=pp/sum(pp), h=hh, K=parms[['K']], gentype="mixed")  
+           pp        <- exp(g.quad - mean.default(g.quad))           
+           res       <- list(p=pp / sum(pp), h=hh, K=parms[['K']], gentype="mixed")  
          },
          "continuous"={
            Sigma     <- solveSPD(parms[['K']])

@@ -53,7 +53,7 @@ The workhorses are \code{getInEdgesMAT()} and \code{getOutEdgesMAT()} and
 these work on adjacency matrices.
 
 Regarding the argument \code{discrete}, please see the documentation of
-\code{\link[gRbase]{mcsmarked}}.
+\code{\link[gRbase:graph-mcs]{mcs_marked}}.
 }
 \note{
 These functions work on undirected graphs. The behaviour is
@@ -67,29 +67,29 @@ adjmat <- as.adjMAT(gg)
 
 #### On a glist
 getEdges(glist)
-getEdges(glist,type="decomposable")
+getEdges(glist, type="decomposable")
 # Deleting (a,d) would create a 4-cycle
 
 getEdges(glist, ingraph=FALSE)
-getEdges(glist,type="decomposable", ingraph=FALSE)
+getEdges(glist, type="decomposable", ingraph=FALSE)
 # Adding (e,b) would create a 4-cycle
 
 #### On a graphNEL
 getEdges(gg)
-getEdges(gg,type="decomposable")
+getEdges(gg, type="decomposable")
 # Deleting (a,d) would create a 4-cycle
 
 getEdges(gg, ingraph=FALSE)
-getEdges(gg,type="decomposable", ingraph=FALSE)
+getEdges(gg, type="decomposable", ingraph=FALSE)
 # Adding (e,b) would create a 4-cycle
 
 #### On an adjacency matrix
 getEdges(adjmat)
-getEdges(adjmat,type="decomposable")
+getEdges(adjmat, type="decomposable")
 # Deleting (a,d) would create a 4-cycle
 
 getEdges(adjmat, ingraph=FALSE)
-getEdges(adjmat,type="decomposable", ingraph=FALSE)
+getEdges(adjmat, type="decomposable", ingraph=FALSE)
 # Adding (e,b) would create a 4-cycle
 
 
@@ -112,8 +112,7 @@ getEdges(UG, type="decomposable", discrete=c("a","b"))
 
 }
 \seealso{
-\code{\link{edgeList}}, \code{\link{nonEdgeList}},
-\code{\link{mcsmarked}}
+\code{\link{edgeList}}, \code{\link{nonEdgeList}}.
 }
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}

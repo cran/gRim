@@ -1,7 +1,4 @@
-## FIXME: citest_array:
-## FIXME: Clean up code;
-## FIXME: use modern tabXXX functions;
-## FIXME: add parametric bootstrap
+## FIXME: citest_array: Clean up code; use modern tabXXX functions; add parametric bootstrap
 
 ###################################################################################
 #'
@@ -137,9 +134,9 @@ ciTest_table <- function(x, set=NULL, statistic="dev", method="chisq", adjust.df
     t.uR <- tabMarg(x, c(u, R))
     t.wR <- tabMarg(x, c(w, R))
 
-    str(list(t.uR=t.uR, t.wR=t.wR, R=R, vn=vn))
+    ##str(list(t.uR=t.uR, t.wR=t.wR, R=R, vn=vn))
     fit.table <- fit2way_(t.uR, t.wR, R, vn)
-    print(fit.table)
+    ##print(fit.table)
     
     ## Evaluate test statistic
     ## FIXME There are functions for that in other functions

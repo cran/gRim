@@ -9,14 +9,15 @@ weakMarginalData <- function(cgdata, disc=NULL, cont=NULL, type="pms", details=2
 
     ##details=6
     ##cgdata <- unclass(cgdata)
-    .infoPrint(details,2,
+    .infoPrint(details,5,
                cat("Finding weak marginal (data)",
                    "     disc:",disc, "cont:", cont, "type:", .genType(disc,cont),"\n"))
+    ##str(list(dist=disc, cont=cont))
     
-    ans <- switch(.genType(disc,cont),
-                  "discrete"   ={.weak.datamarg.disc  (cgdata, disc,       details)},
-                  "mixed"      ={.weak.datamarg.mix   (cgdata, disc, cont, details)},         
-                  "continuous" ={.weak.datamarg.cont  (cgdata,       cont, details)})
+    ans <- switch(.genType(disc, cont),
+                  "discrete"   ={.weak.datamarg.disc(cgdata, disc,       details)},
+                  "mixed"      ={.weak.datamarg.mix (cgdata, disc, cont, details)},
+                  "continuous" ={.weak.datamarg.cont(cgdata,       cont, details)})
 
     #cat("ans:----------------\n"); print(ans)
     #aaa <<- ans
@@ -125,7 +126,7 @@ weakMarginalData <- function(cgdata, disc=NULL, cont=NULL, type="pms", details=2
   N        <- sum(n.i)
   
   mu.i     <- cgdata$center[Ac.idx,,drop=FALSE]
-  Sigma.i  <- cgdata$cov[as.numeric(.rowcol2idx(n.cont,Ac.idx)),,drop=FALSE]
+  Sigma.i  <- cgdata$cov[as.numeric(.rowcol2idx(n.cont,Ac.idx)),, drop=FALSE]
   p.i      <- n.i / sum(n.i)
 
   ssdA.i   <- .colmult(n.i, Sigma.i)
@@ -134,7 +135,7 @@ weakMarginalData <- function(cgdata, disc=NULL, cont=NULL, type="pms", details=2
   mu.A     <- rowSumsPrim(.colmult(p.i, mu.i))
   mu.dif   <- mu.i - mu.A
   quad     <- .vMMt(n.i, mu.dif)
-  Sigma.A  <- (sum.ssdA + quad)/N
+  Sigma.A  <- (sum.ssdA + quad) / N
 
   dim(mu.A) <- c(dim(mu.i)[1],1)
   rownames(Sigma.A) <- colnames(Sigma.A) <- rownames(mu.A) <- rownames(mu.i) 

@@ -1,4 +1,4 @@
-## FIXME: Delete df from loglin() output.
+##FIXME: Delete df from loglin() output.
 
 ##########################################################
 ##
@@ -8,7 +8,7 @@
 #'     'd' in the name \code{dmod} refers to that it is a (graphical)
 #'     model for 'd'iscrete variables
 #' 
-#' @name dmod
+#' @name imodel-dmod
 ##
 ##########################################################
 
@@ -103,17 +103,15 @@ dmod <- function(formula, data, marginal=NULL, interactions=NULL, fit=TRUE, deta
     varNames     <- names(dimnames(data))
     
     res <- list(
-        call = match.call(),
-        glist     = ans$glist,
+        modelinfo = NULL,
         varNames  = varNames,
         datainfo  = list(data=data),
         fitinfo   = NULL,
         isFitted  = FALSE
     )
     
-    upd <- .dModel_finalize(ans$glist, varNames)
-    res[names(upd)] <- upd
-    
+    upd <- .dModel_finalize(ans$glist, varNames) ## NOTE not .glist
+    res$modelinfo  <- upd    
     class(res) <- c("dModel", "iModel")
     
     if (fit) fit(res) else res
@@ -121,13 +119,9 @@ dmod <- function(formula, data, marginal=NULL, interactions=NULL, fit=TRUE, deta
 
 
 .dModel_finalize<- function(glist, varNames){
-
-    zzz <- isGSD_glist(glist)
-    glistNUM <- .glistNUM(glist, varNames)
-    
-    ret      <- list(glistNUM   = glistNUM,
-                     properties = zzz)
-    ret
+    list(glist      = glist,
+         glistNUM   = .glistNUM(glist, varNames),
+         properties = isGSD_glist(glist))
 }
 
 
@@ -206,8 +200,8 @@ fit.dModel <- function(object, engine="loglin", print=FALSE, ...){
     
     llfit$df        <- NULL
     llfit$fit <- NULL
-    llfit$aic       <- -2*llfit$logL + 2 * dimension['mod.dim']
-    llfit$bic       <- -2*llfit$logL + log(sum(getmi(object, "data"))) * dimension['mod.dim']
+    llfit$aic       <- -2 * llfit$logL + 2 * dimension['mod.dim']
+    llfit$bic       <- -2 * llfit$logL + log(sum(getmi(object, "data"))) * dimension['mod.dim']
     
     ## Calculate warning codes for sparsity
     sparseinfo <- .dModel_sparsity (llfit,
@@ -308,6 +302,7 @@ fit.dModel <- function(object, engine="loglin", print=FALSE, ...){
 
 
 
+#' @method residuals "dModel"
 #' @export
 residuals.dModel <-
     function (object, type = c("deviance", "pearson", "response"),
@@ -325,3 +320,6 @@ residuals.dModel <-
         mu)/sqrt(mu), response = y - mu)
     res
 }
+
+
+

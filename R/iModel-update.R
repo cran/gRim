@@ -16,9 +16,9 @@
 #' @export
 update.iModel <- function(object, items, fit=TRUE, details=0, ...){
 
-    glist           <- modify_glist(object$glist, items)
-    object$glist    <- glist
-
+    glist           <- modify_glist(.glist(object), items)
+    .glist(object)   <- glist
+    
     switch(class(object)[1],
            "dModel"={
                upd <- .dModel_finalize(glist, object$varNames)
@@ -193,7 +193,7 @@ modify_glist <- function(glist, items, details=0){
             }
         }
     }
-    removeRedundant( c(glist, extra) )
+    remove_redundant( c(glist, extra) )
 }
 
 
@@ -237,7 +237,7 @@ modify_glist <- function(glist, items, details=0){
   if (isin( glist, term ))
     glist
   else
-    removeRedundant( c(list(term), glist) )
+    remove_redundant( c(list(term), glist) )
 }
 
 .drop.term_glist <- function(glist, term){
@@ -274,7 +274,7 @@ modify_glist <- function(glist, items, details=0){
     }
 
     glist.new <- c(glist[ changed==0 ], unlist(extra, recursive=FALSE, use.names=FALSE))
-    removeRedundant( glist.new )
+    remove_redundant( glist.new )
 }
 
 

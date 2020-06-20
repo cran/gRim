@@ -6,7 +6,7 @@
 #'     the generating class 'glist'. If the model is decomposable and
 #'     adjusted dimension can be found.
 #'
-#' @name dim-loglin
+#' @name loglin-dim
 #'
 #######################################################################
 #'
@@ -44,7 +44,7 @@
 #' 
 #' @return A numeric.
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
-#' @seealso \code{\link{dmod}}, \code{\link{glm}}, \code{\link{loglm}}
+#' @seealso \code{\link{dmod}}, \code{\link{glm}}, \code{\link[MASS]{loglm}}
 #' @keywords models
 #'
 #' @examples
@@ -59,7 +59,7 @@
 #' 
 
 #' @export
-#' @rdname dim-loglin
+#' @rdname loglin-dim
 dim_loglin <- function(glist, tableinfo){
 
   if (is.table(tableinfo)){
@@ -82,7 +82,7 @@ dim_loglin <- function(glist, tableinfo){
 ##
 
 #' @export
-#' @rdname dim-loglin
+#' @rdname loglin-dim
 dim_loglin_decomp <- function(glist, tableinfo, adjust=TRUE){
     rr <- ripMAT(glist2adjMAT(glist))  ## FIXME glist2adjMAT should go...
     .dim_loglin_decomp(rr$cliques, rr$separators, tableinfo=tableinfo, adjust=adjust)

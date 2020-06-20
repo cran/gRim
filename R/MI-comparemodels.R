@@ -1,7 +1,7 @@
 
 
 compareModels.iModel <- function(object, object2, k=2, ...){
-  comp <- compareGC(object$glist, object2$glist)
+  comp <- compareGC(.glist(object), .glist(object2))
   logL1 <- logLik(object)
   logL2 <- logLik(object2)
   
@@ -14,14 +14,14 @@ compareModels.iModel <- function(object, object2, k=2, ...){
       larger <- 2
       d.logL <- c(logL2-logL1)
       d.df   <- c(attr(logL1,"df")-attr(logL2, "df"))
-      large  <- object2$glist
-      small  <- object$glist
+      large  <- .glist(object2)
+      small  <- .glist(object)
     } else {
       larger <- 1
       d.logL <- c(logL1-logL2)
       d.df   <- c(attr(logL2,"df")-attr(logL1, "df"))
-      large  <- object$glist
-      small  <- object2$glist
+      large  <- .glist(object)
+      small  <- .glist(object2)
     }  
   }
       
@@ -70,18 +70,3 @@ compareGCpairs <- function(gc1, gc2){
 }
 
 
-
-## .compareModel <- function(x, basestat=c(0,0), crit="aic", k=2,direction="drop", ...){
-
-##   switch(crit,
-##     "aic"={
-##       ans <- c(-x[1]+basestat[1] + k*(x[2]-basestat[2]))
-##       if (direction=="add")
-##         ans <- -ans
-##     },
-##     "test"={
-##       ans <- 1-pchisq(abs(x[1]-basestat[1]), df=abs(x[2]-basestat[2]))
-##     } 
-##   )
-##   return(ans)
-## }

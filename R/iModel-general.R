@@ -1,3 +1,4 @@
+
 #####################################################################
 #' @title General functions related to iModels
 #' @description General functions related to iModels
@@ -43,7 +44,7 @@ print.iModelsummary <- function(x,...){
     cat(sprintf("is graphical=%s; is decomposable=%s\n",
                 x$isGraphical, x$isDecomposable))
     cat("generators (glist):\n")
-    str(x$glist, give.head=FALSE, comp.str=" ", no.list=TRUE)
+    str(.glist(x), give.head=FALSE, comp.str=" ", no.list=TRUE)
     ##cat("EXPERIMENTAL: components: ", names(x),"\n")
     invisible(x)
 }
@@ -67,24 +68,24 @@ print.iModelsummary <- function(x,...){
 #' @export
 #' @rdname imodel-general
 formula.iModel <- function(x,...){
-    .glist2formula(x$glist)
+    .glist2formula(terms(x))
 }
 
 #' @export
 #' @rdname imodel-general
 terms.iModel <- function(x, ...){
-    x$glist
+    modelinfo(x)$glist
 }
 
 
 #' @rdname imodel-general
 isGraphical.dModel <- function(x){
-    isGraphical( terms(x) )
+    isGraphical(terms(x))
 }
 
 #' @rdname imodel-general
 isDecomposable.dModel <- function(x){
-    isDecomposable( terms(x) )
+    isDecomposable(terms(x))
 }
 
 #' @rdname imodel-general
@@ -105,4 +106,17 @@ modelProperties.dModel <- function(object){
            else FALSE
     
     c(isGraphical=isg, isDecomposable=isd)
+}
+
+
+datainfo <- function(object){
+    object$datainfo
+}
+
+fitinfo <- function(object){
+    object$fitinfo
+}
+
+modelinfo <- function(object){
+    object$modelinfo
 }

@@ -101,7 +101,6 @@ print.citest <- function(x, ...){
     invisible( x )
 }
 
-## FIXME: Do we need summary.citest??
 #' @export
 summary.citest <- function(object,...){
     print( object )
