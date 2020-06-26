@@ -1,4 +1,16 @@
-gRim v0.2.2  (Release date: 2020-06-20)
+gRim v0.2.4  (Release date: 2020-XX-XX)
+=======================================
+
+Changes:
+
+  * doi reference added to description file
+  * CITATION file added
+  * testthat added
+
+Fixes:
+  * forward model selection based on (A)IC was wrong. Has been fixed.
+
+gRim v0.2.3  (Release date: 2020-06-20)
 =======================================
 
 Fixes

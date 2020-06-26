@@ -1,13 +1,3 @@
-
-## ########################################################
-##
-## CIP test in MVN-distribution
-## <x>  : list(cov=, n.obs=)
-##
-## ########################################################
-
-
-
 ##########################################################################
 #'
 #' @title Test for conditional independence in the multivariate normal
@@ -44,7 +34,7 @@
 #' 
 #' @return An object of class `citest` (which is a list).
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
-#' @seealso \code{\link{ciTest}} \code{\link{ciTest_table}},
+#' @seealso \code{\link{ciTest}}, \code{\link{ciTest_table}},
 #'     \code{\link{ciTest_df}},
 #'     \code{\link{ciTest_mvn}}, \code{\link{chisq.test}}
 #' @keywords htest
@@ -78,11 +68,8 @@ ciTest_mvn <- function(x, set=NULL, statistic="DEV", ...){
 ###
 .ciTest_mvn_internal <- function(x, statistic="DEV", ...){
 
-  statistic <- match.arg(toupper(statistic), c("DEV","F"))
-  if (statistic=="DEV")
-    method <- "CHISQ"
-  else
-    method <- "F"
+  statistic <- match.arg(toupper(statistic), c("DEV", "F"))
+  method <- if (identical(statistic, "DEV")) "CHISQ" else "F"
 
   S     <- x$cov
   n.obs <- x$n.obs

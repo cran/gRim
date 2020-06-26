@@ -12,10 +12,10 @@
 ##
 ##########################################################
 
-#' @details The independence model can be specified as \code{~.^1} and the
-#'     saturated model as \code{~.^.}.  Setting e.g. \code{interactions=3}
-#'     implies that there will be at most three factor interactions in the
-#'     model.
+#' @details The independence model can be specified as \code{~.^1} and
+#'     \code{~.^.} specifies the saturated model.  Setting
+#'     e.g. \code{interactions=3} implies that there will be at most
+#'     three factor interactions in the model.
 #' 
 #' Data can be specified as a table of counts or as a dataframe. If
 #' data is a dataframe then it will be converted to a table (using
@@ -112,8 +112,8 @@ dmod <- function(formula, data, marginal=NULL, interactions=NULL, fit=TRUE, deta
     
     upd <- .dModel_finalize(ans$glist, varNames) ## NOTE not .glist
     res$modelinfo  <- upd    
+
     class(res) <- c("dModel", "iModel")
-    
     if (fit) fit(res) else res
 }
 
@@ -123,6 +123,9 @@ dmod <- function(formula, data, marginal=NULL, interactions=NULL, fit=TRUE, deta
          glistNUM   = .glistNUM(glist, varNames),
          properties = isGSD_glist(glist))
 }
+
+
+
 
 
 #' @export
@@ -297,9 +300,6 @@ fit.dModel <- function(object, engine="loglin", print=FALSE, ...){
 
   sparseinfo
 }
-
-
-
 
 
 #' @method residuals "dModel"
