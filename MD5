@@ -1,5 +1,5 @@
 1a06e19763fd223bb0c11e1994230782 *ChangeLog
-edabe07b936d721fa21da3222df6d7d1 *DESCRIPTION
+438c322aa97bf1265e09a60a4227ac41 *DESCRIPTION
 314f2fad370f0658c916f5ee3b11a490 *NAMESPACE
 ad5c0e52981b63ed26dba04a9717b04f *NEWS
 02fcf77a32422c42f0854d9eea9e43d7 *R/NAMESPACE.R
@@ -22,7 +22,7 @@ d8f003434bc180364afb0a33000c57b8 *R/imodel-plot-print.R
 b4af87837d038acb7f98126f4d2a5c1b *R/imodel-update.R
 0440d80bce295ccfa0ed8bd1ad08688b *R/internal-grim.R
 69506d3080262a2448ab367af4f4ad60 *R/loglin-dim.R
-0d8168707563943a7f47be377e3a3f69 *R/loglin-effloglin.R
+834a09145ae9aad9f8817347e7b9bdea *R/loglin-effloglin.R
 e67cc216bad6fc1b55474436931b7ed9 *R/mi-comparemodels.R
 20644a18b0ad2f00c9a3102b1901d31e *R/mi-dimension.R
 dbe976638be88cd2858c7c196ae3ad79 *R/mi-fit.R
@@ -35,11 +35,11 @@ dbe976638be88cd2858c7c196ae3ad79 *R/mi-fit.R
 c6e188473b5f46694dda27ca551fc468 *R/test-stepwise.R
 e7d40444cc11c4fa7766936d8f56ee01 *README.md
 6c5754a875f1c584bb0a2c6ed810ca9b *TODO
-6021856f6663711595d6a9650a9a471e *build/vignette.rds
+d752009b7591b49e8aa9a2f50fd7a802 *build/vignette.rds
 469faed567133c33ab441011d2a913e4 *inst/CITATION
 e005ba8d5aef6243b5925fc9f5eecb31 *inst/doc/grim.R
 303520492c4f5fe0fe68a42cee5cbbfa *inst/doc/grim.Rnw
-5665d53b99b677ee75f92a7bab180bf6 *inst/doc/grim.pdf
+975b78ee78b907b32be7d464a7ad068d *inst/doc/grim.pdf
 c3d2c7207b2ea922e1fc2955e27b6da2 *man/cg-stats.Rd
 f064331c6cce532fb2971620df6559c5 *man/citest-array.Rd
 ce6162e94f3a59f95427f72cc0713d20 *man/citest-df.Rd
@@ -56,7 +56,7 @@ cc0cb51f9a967c9384520d8b5b1e0c8e *man/gRim-internal.Rd
 54832e915dd06769f9501f7edd13bdf9 *man/imodel-mmod.Rd
 2a385fcced7fc35c9f840446da0c0973 *man/internal.Rd
 044a6f4ddf7ab1af43119e21c19575c7 *man/loglin-dim.Rd
-5dd2a8e5c707d6e4638918db6b3e98ef *man/loglin-effloglin.Rd
+ad77b6197c050ecd343d0cd9fa40b0f0 *man/loglin-effloglin.Rd
 28aaf21660bef1e51a1b23e15217c213 *man/modify_glist.Rd
 2d48813d862395e55fd8017d529c3962 *man/parm-conversion.Rd
 cdbf698eb17e9927032374140cf3dbea *man/parse_gm_formula.Rd
@@ -78,10 +78,10 @@ cbd1e8028ab3e1407cce038e36a44b24 *src/init.c
 b66236452195040bc9b2edd6e9df63d9 *tests/testhat.R
 ca5174d66e929d67adf65b8cfa8bcfa6 *tests/testthat/test-misc.R
 a3f4b116122eb8dc5f0ae0ddee005a1a *vignettes/GMIR.sty
-39c636e7888ca8c7c43c3ac56ec1f6e5 *vignettes/figures/GRIM-011.pdf
-b99adda06d6c09f3ea5fd5a6cf71d317 *vignettes/figures/GRIM-013.pdf
-8de14d67fa15aff25997d15c5bfced9a *vignettes/figures/GRIM-015.pdf
-44d8281b93f15f790b5420db02cfc1c1 *vignettes/figures/GRIM-034.pdf
-0c7c5dababf567ced351da8288f442ca *vignettes/figures/GRIM-035.pdf
-a1ce68e65d87e8f4b568c3a7c1af8f85 *vignettes/figures/GRIM-fundamentalfig1.pdf
+a69d44122bac791c6377bd0719226b19 *vignettes/figures/GRIM-011.pdf
+a6c108ac44ed3699daff7c56b45c383a *vignettes/figures/GRIM-013.pdf
+be45f97997fe294621fa5021f87f954c *vignettes/figures/GRIM-015.pdf
+2ab7d8981e5649a325cc6a1dc6f52431 *vignettes/figures/GRIM-034.pdf
+aab87bd3b76e527721b1a22c321bbb96 *vignettes/figures/GRIM-035.pdf
+a191f75b15381677cd817de41a269744 *vignettes/figures/GRIM-fundamentalfig1.pdf
 303520492c4f5fe0fe68a42cee5cbbfa *vignettes/grim.Rnw
