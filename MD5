@@ -1,7 +1,7 @@
 1a06e19763fd223bb0c11e1994230782 *ChangeLog
-d5973c277a63b6b9637f54366a7b7afa *DESCRIPTION
+d0642b8200b30faed097f60b5671ddcf *DESCRIPTION
 c550e03211828a92351be30fbff5c62c *NAMESPACE
-661eb19791417a936937df978b29aed7 *NEWS
+67f227affc333c2166e22d2768febf90 *NEWS
 e25201e4419585172d85e02089ad530c *R/NAMESPACE.R
 55e96d9f0498cd34faf5d9c3808c7482 *R/RcppExports.R
 d6597bb012e13ee2261be97122ad61e2 *R/cg-stats.R
@@ -29,7 +29,7 @@ dbe976638be88cd2858c7c196ae3ad79 *R/mi-fit.R
 4c0c100a58886f0400f363251ae35542 *R/mi-parm-conversion.R
 35923fa57492bf0fa4830d6aa2e8816a *R/mi-weakdata.R
 5c29eb73ca649c855c56397d2c6d7006 *R/mi-weakmodel.R
-4d20fb75a510f1b7587b8667616a04c2 *R/parse-gm-formula.R
+b143d400aa43be303fc1bdaafddde19a *R/parse_gm_formula.R
 0a4b733857d5ecd95f92659aedc4d836 *R/test-all-edges.R
 038cdf61420dcef37044fc6c38ded1be *R/test-single-edges.R
 92af2b5f85c7631a220ebed60cf2d1f4 *R/test-stepwise.R
