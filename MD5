@@ -1,5 +1,5 @@
 1a06e19763fd223bb0c11e1994230782 *ChangeLog
-0641d038d99143834042b126cb662ca7 *DESCRIPTION
+278358e3e8a09d458031ad97a510e2a3 *DESCRIPTION
 3906b8953f46338d9b291d89c6b6f55e *NAMESPACE
 3d227785a46db1105d9c951fd583542c *NEWS
 91fbe788e94369267021d08c96ebab84 *R/NAMESPACE.R
@@ -9,7 +9,7 @@ be58f25558ad73f9a4d056fa2ace570c *R/cg_stats.R
 3f86b03eb49d7ac4913bbe6a42f863a4 *R/citest_generic.R
 7170cad672a7eaa6fb8544e6073f8566 *R/citest_mvn.R
 29a89429fa21c99ed3c620f816d1bbd6 *R/citest_ordinal.R
-f6f16a351b929861dd32e687e5bc90bf *R/fit_ggm_grips.R
+36750a95fbcdb1bf038a672e11d6c066 *R/fit_ggm_grips.R
 6de6f5ecc560ea476a9d98949f111d25 *R/fit_ggm_old.R
 4bb6480127b08eefe5d739177df09362 *R/fit_ips_grips.R
 b6fcaafd6ee288e730f03d8077cf2ef9 *R/fit_ncd_grips.R
@@ -71,7 +71,7 @@ ee83cac99de901937403a36117662fa7 *man/cmod.Rd
 caad36c4e29427817077c0d3b3306870 *man/coerce_models.Rd
 55cb1af9eeb3301b3fa2438d2bff11fa *man/emat_operations.Rd
 b0b9acf5eeec186a3f6648adbae8005b *man/fast_cov.Rd
-4cb7bfad3976176d447335b0fba602df *man/fit_ggm_grips.Rd
+ae6e87302daa33692b21dd5b3d3cee68 *man/fit_ggm_grips.Rd
 4f54c4e51e28fc70d0f9399f6c26ef49 *man/generate_models.Rd
 84881b30986e48763c9042eec6df39c0 *man/generate_n01.Rd
 3a272998265c6066919e4e2ad6776186 *man/getEdges.Rd
